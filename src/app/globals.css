@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+main {
+  background-color: #1e1e1e;
+  color: #fff;
+}
+
 .yRemoteSelection {
   background-color: rgb(250, 129, 0, 0.5);
 }
