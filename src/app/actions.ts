@@ -11,9 +11,3 @@ export async function loadPageContent(page: string) {
 
   return Array.from(buffer);
 }
-
-export async function savePageContent(page: string, state: Uint8Array) {
-  const buffer = Array.from(state);
-
-  await kv.set(page, buffer);
-}

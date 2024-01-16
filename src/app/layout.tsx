@@ -7,7 +7,7 @@ import "./globals.css";
 const font = JetBrains_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Missopad",
+  title: "Mpad",
   description: "Create collaborative notes on the fly",
 };
 
