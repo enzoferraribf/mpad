@@ -1,18 +1,17 @@
 "use client";
 
-import { useCallback, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 
 import { usePathname } from "next/navigation";
 
-import Editor, { Monaco, useMonaco } from "@monaco-editor/react";
+import Editor, { Monaco } from "@monaco-editor/react";
 import { editor } from "monaco-editor";
 
-import { Doc, applyUpdateV2, encodeStateAsUpdateV2 } from "yjs";
+import { Doc, applyUpdateV2 } from "yjs";
 import { WebrtcProvider } from "y-webrtc";
 import { MonacoBinding } from "y-monaco";
 
-import { loadPageContent, savePageContent } from "@/app/actions";
-import { debounced } from "@/app/utils";
+import { loadPageContent } from "@/app/actions";
 
 export default function Pad() {
   const monacoRef = useRef<editor.IStandaloneCodeEditor>();
@@ -20,7 +19,6 @@ export default function Pad() {
   const documentRef = useRef<Doc>();
 
   const pathname = usePathname();
-  const monaco = useMonaco();
 
   useEffect(() => {
     return () => {
@@ -30,37 +28,50 @@ export default function Pad() {
     };
   }, []);
 
+  async function createInitializedDocument() {
+    const ydocument = new Doc();
+
+    const previous = await loadPageContent(pathname);
+
+    if (previous) {
+      applyUpdateV2(ydocument, new Uint8Array(previous));
+    }
+
+    return ydocument;
+  }
+
+  function createRTCProvider(ydocument: Doc) {
+    const signalingServer = process.env.NEXT_PUBLIC_SIGNALING_SERVER!;
+
+    const options = { signaling: [signalingServer] };
+
+    return new WebrtcProvider(pathname, ydocument, options);
+  }
+
+  function bindMonacoToRTCProvider(
+    ydocument: Doc,
+    editor: editor.IStandaloneCodeEditor,
+    provider: WebrtcProvider
+  ) {
+    const type = ydocument.getText("monaco");
+
+    const model = editor.getModel()!;
+
+    const editors = new Set([editor]);
+
+    return new MonacoBinding(type, model, editors, provider.awareness);
+  }
+
   async function handleMonacoMount(
     editor: editor.IStandaloneCodeEditor,
     _: Monaco
   ) {
     if (typeof window !== "undefined") {
-      const ydocument = new Doc();
+      const ydocument = await createInitializedDocument();
 
-      const previous = await loadPageContent(pathname);
+      const provider = createRTCProvider(ydocument);
 
-      if (previous) {
-        applyUpdateV2(ydocument, new Uint8Array(previous));
-      }
-
-      const signalingServer = process.env.NEXT_PUBLIC_SIGNALING_SERVER!;
-
-      const options = { signaling: [signalingServer] };
-
-      const provider = new WebrtcProvider(pathname, ydocument, options);
-
-      const type = ydocument.getText("monaco");
-
-      const model = editor.getModel()!;
-
-      const editors = new Set([editor]);
-
-      const binding = new MonacoBinding(
-        type,
-        model,
-        editors,
-        provider.awareness
-      );
+      const binding = bindMonacoToRTCProvider(ydocument, editor, provider);
 
       monacoRef.current = editor;
       documentRef.current = ydocument;
@@ -68,23 +79,13 @@ export default function Pad() {
     }
   }
 
-  // TODO: remove in favor of server-side persistence.
-  const handleUpdate = useCallback(
-    () =>
-      debounced(async () => {
-        if (documentRef.current) {
-          await savePageContent(
-            pathname,
-            encodeStateAsUpdateV2(documentRef.current!)
-          );
-        }
-      }, 500),
-    [documentRef, pathname]
-  );
-
   return (
-    <main className="grid h-svh w-svw overflow-hidden">
-      <div className="p-5">
+    <main className="grid grid-rows-15 grid-cols-8 gap-6 h-svh w-svw overflow-hidden p-4">
+      <div className="flex col-span-8 row-span-3 text-center bg-[#1e1e1e] justify-center items-center">
+        <h2>Missopad 👀</h2>
+      </div>
+
+      <div className="col-span-8 row-span-12">
         <Editor
           defaultLanguage="markdown"
           onMount={handleMonacoMount}
@@ -93,10 +94,9 @@ export default function Pad() {
             lineHeight: 1.8,
             fontFamily: "JetBrains Mono",
             cursorStyle: "block-outline",
-            padding: { top: 20, bottom: 20 },
+            padding: { top: 32, bottom: 32 },
           }}
           theme="vs-dark"
-          onChange={handleUpdate}
         />
       </div>
     </main>
