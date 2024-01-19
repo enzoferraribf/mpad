@@ -2,8 +2,6 @@
 
 import { KeyboardEvent, useEffect, useRef, useState } from "react";
 
-import { usePathname } from "next/navigation";
-
 import Editor, { Monaco } from "@monaco-editor/react";
 import { editor } from "monaco-editor";
 
@@ -11,14 +9,29 @@ import { Doc, applyUpdateV2, encodeStateAsUpdateV2 } from "yjs";
 import { WebrtcProvider } from "y-webrtc";
 import { MonacoBinding } from "y-monaco";
 
-import { handleServerSidePersistence, rebuildPageContent } from "@/app/actions";
+import { handleServerSidePersistence } from "@/app/actions";
 
-export default function Pad() {
+import { handleServerDateTime } from "@/app/utils/datetime";
+import StatusBar from "./status-bar";
+
+interface IPadProps {
+  pathname: string;
+  initialChangeSet: number[] | null;
+  initialLastUpdate: string | null;
+}
+
+export default function Pad({
+  pathname,
+  initialChangeSet,
+  initialLastUpdate,
+}: IPadProps) {
   const monacoRef = useRef<editor.IStandaloneCodeEditor>();
   const bindingRef = useRef<MonacoBinding>();
   const documentRef = useRef<Doc>();
 
-  const pathname = usePathname();
+  const [lastUpdate, setLastUpdate] = useState<string>(
+    handleServerDateTime(initialLastUpdate)
+  );
 
   const [hasModification, setHasModification] = useState<boolean>(false);
 
@@ -30,6 +43,8 @@ export default function Pad() {
     };
   }, []);
 
+  console.log(bindingRef.current?.awareness?._observers.size);
+
   const handleMonacoMount = async (
     editor: editor.IStandaloneCodeEditor,
     _: Monaco
@@ -37,10 +52,8 @@ export default function Pad() {
     if (typeof window !== "undefined") {
       const ydocument = new Doc();
 
-      const changeSet = await rebuildPageContent(pathname);
-
-      if (changeSet) {
-        const buffer = new Uint8Array(changeSet);
+      if (initialChangeSet) {
+        const buffer = new Uint8Array(initialChangeSet);
 
         applyUpdateV2(ydocument, buffer);
       }
@@ -79,38 +92,41 @@ export default function Pad() {
 
     const buffer = encodeStateAsUpdateV2(documentRef.current);
 
-    await handleServerSidePersistence(pathname, Array.from(buffer));
+    const { lastUpdate } = await handleServerSidePersistence(
+      pathname,
+      Array.from(buffer)
+    );
 
     setHasModification(false);
+    setLastUpdate(handleServerDateTime(lastUpdate));
+  };
+
+  const handleModification = (_: string | undefined) => {
+    setHasModification(true);
   };
 
   return (
-    <main className="grid grid-rows-15 grid-cols-8 gap-6 h-svh w-svw overflow-hidden p-4">
-      <div className="flex col-span-8 row-span-3 text-center bg-[#1e1e1e] justify-center items-center">
-        <h2>Missopad 👀</h2>
-      </div>
+    <div className="h-full" onKeyDown={handleSave}>
+      <Editor
+        defaultLanguage="markdown"
+        onMount={handleMonacoMount}
+        options={{
+          minimap: { enabled: false },
+          lineHeight: 1.8,
+          fontFamily: "JetBrains Mono",
+          cursorStyle: "block-outline",
+          padding: { top: 32, bottom: 32 },
+        }}
+        theme="vs-dark"
+        height="95%"
+        onChange={handleModification}
+      />
 
-      <div className="flex w-fit h-10 bg-[#1e1e1e] items-center pl-12 pr-12 rounded-md">
-        <span>
-          {pathname} {hasModification && "•"}
-        </span>
-      </div>
-
-      <div className="col-span-8 row-span-12" onKeyDown={handleSave}>
-        <Editor
-          defaultLanguage="markdown"
-          onMount={handleMonacoMount}
-          options={{
-            minimap: { enabled: false },
-            lineHeight: 1.8,
-            fontFamily: "JetBrains Mono",
-            cursorStyle: "block-outline",
-            padding: { top: 32, bottom: 32 },
-          }}
-          theme="vs-dark"
-          onChange={() => !hasModification && setHasModification(true)}
-        />
-      </div>
-    </main>
+      <StatusBar
+        pathname={pathname}
+        hasModification={hasModification}
+        lastUpdate={lastUpdate}
+      />
+    </div>
   );
 }
