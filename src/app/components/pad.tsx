@@ -43,8 +43,6 @@ export default function Pad({
     };
   }, []);
 
-  console.log(bindingRef.current?.awareness?._observers.size);
-
   const handleMonacoMount = async (
     editor: editor.IStandaloneCodeEditor,
     _: Monaco
