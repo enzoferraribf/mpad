@@ -4,7 +4,7 @@ import dynamic from 'next/dynamic';
 
 import { getInitialPageContent } from '@/app/actions';
 
-const Pad = dynamic(() => import('@/app/components/pad'), { ssr: false });
+const Pad = dynamic(() => import('@/app/components/pad'), { ssr: true });
 
 interface IPageProps {
     params: { slug: string[] };

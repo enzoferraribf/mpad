@@ -28,7 +28,9 @@ export default function Home() {
     return (
         <div className="min-w-577 min-h-365 flex h-svh w-svw flex-col items-center justify-center overflow-auto bg-black text-white">
             <div className="mt-[-60px] flex flex-col items-center justify-center">
-                <h1 className="bg-gradient-to-r from-purple-600 to-blue-600 text-9xl">Mpad</h1>
+                <h1 className="background-animate bg-gradient-to-r  from-purple-600 via-sky-600 to-blue-600 text-9xl">
+                    Mpad
+                </h1>
                 <p>Collaborative documents in realtime</p>
             </div>
 

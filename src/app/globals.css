@@ -62,7 +62,6 @@
 
 .markdown-body {
     background-color: var(--foreground) !important;
-    font-family: JetBrains Mono !important;
     font-size: 14px !important;
 }
 

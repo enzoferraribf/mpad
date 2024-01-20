@@ -17,7 +17,7 @@ interface RootLayoutProps {
 
 export default function RootLayout({ children }: RootLayoutProps) {
     return (
-        <html lang="en">
+        <html lang="en" className="bg-[#1e1e1e]">
             <body className={font.className}>{children}</body>
         </html>
     );

@@ -1,6 +1,6 @@
 'use client';
 
-import { KeyboardEvent, useEffect, useRef, useState } from 'react';
+import React, { KeyboardEvent, useEffect, useRef, useState } from 'react';
 
 import Editor, { Monaco } from '@monaco-editor/react';
 import { editor } from 'monaco-editor';
@@ -36,6 +36,8 @@ export default function Pad({ pathname, initialChangeSet, initialLastUpdate }: I
     const [hasModification, setHasModification] = useState<boolean>(false);
 
     const [content, setContent] = useState<string>('');
+
+    const [loaded, setLoaded] = useState<boolean>(false);
 
     useEffect(() => {
         return () => {
@@ -91,6 +93,8 @@ export default function Pad({ pathname, initialChangeSet, initialLastUpdate }: I
                 startLineNumber: 0,
                 endLineNumber: 0,
             });
+
+            setLoaded(true);
         }
     };
 
@@ -105,8 +109,10 @@ export default function Pad({ pathname, initialChangeSet, initialLastUpdate }: I
 
         const { lastUpdate } = await handleServerSidePersistence(pathname, Array.from(buffer));
 
+        const localizedUpdate = handleServerDateTime(lastUpdate);
+
         setHasModification(false);
-        setLastUpdate(handleServerDateTime(lastUpdate));
+        setLastUpdate(localizedUpdate);
     };
 
     const handleModification = (text: string | undefined) => {
@@ -121,7 +127,14 @@ export default function Pad({ pathname, initialChangeSet, initialLastUpdate }: I
         >
             <Header />
 
-            <ResizablePanelGroup direction="horizontal">
+            {/* Since we can't dynamically create the editor, we need this hidden hack to make sure that we have a proper loading screen */}
+            <div className={`${loaded && 'hidden'} flex items-center justify-center`}>
+                <h1 className="background-animate bg-gradient-to-r  from-purple-600 via-sky-600 to-blue-600 text-9xl">
+                    Mpad
+                </h1>
+            </div>
+
+            <ResizablePanelGroup className={`${!loaded && 'hidden'}`} direction="horizontal">
                 <ResizablePanel>
                     <Editor
                         defaultLanguage="markdown"
@@ -136,12 +149,13 @@ export default function Pad({ pathname, initialChangeSet, initialLastUpdate }: I
                         }}
                         theme="vs-dark"
                         onChange={handleModification}
+                        loading={false}
                     />
                 </ResizablePanel>
 
                 <ResizableHandle className="bg-[#2c2c2c]" />
 
-                <ResizablePanel>
+                <ResizablePanel className={`${!loaded && 'hidden'}`}>
                     <div className="markdown-body h-full overflow-y-scroll bg-[#1e1e1e] p-4">
                         <MarkdownRenderer content={content} />
                     </div>
