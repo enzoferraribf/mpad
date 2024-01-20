@@ -16,7 +16,10 @@ import { handleServerDateTime } from '@/app/utils/datetime';
 import Header from '@/app/components/header';
 import MarkdownRenderer from '@/app/components/markdown-renderer';
 import StatusBar from '@/app/components/status-bar';
+import { CommandDialog } from '@/app/components/command';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/app/components/resizable';
+import { CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/app/components/command';
+import { toast } from 'sonner';
 
 interface IPadProps {
     pathname: string;
@@ -39,11 +42,29 @@ export default function Pad({ pathname, initialChangeSet, initialLastUpdate }: I
 
     const [loaded, setLoaded] = useState<boolean>(false);
 
+    const [openCommand, setOpenCommand] = useState<boolean>(false);
+
     useEffect(() => {
         return () => {
             bindingRef.current?.destroy();
             documentRef.current?.destroy();
             monacoRef.current?.dispose();
+        };
+    }, []);
+
+    useEffect(() => {
+        const handleCommandOpen = (event: globalThis.KeyboardEvent) => {
+            if (!event.ctrlKey || event.key !== 'j') return;
+
+            event.preventDefault();
+
+            setOpenCommand((openCommand) => !openCommand);
+        };
+
+        window.addEventListener('keydown', handleCommandOpen);
+
+        return () => {
+            window.removeEventListener('keydown', handleCommandOpen);
         };
     }, []);
 
@@ -98,12 +119,22 @@ export default function Pad({ pathname, initialChangeSet, initialLastUpdate }: I
         }
     };
 
-    const handleSave = async (event: KeyboardEvent<HTMLDivElement>) => {
-        if (!documentRef.current) return;
-
+    const handleSaveFromKeyboard = async (event: KeyboardEvent<HTMLElement>) => {
         if (!event.ctrlKey || event.key !== 's') return;
 
         event.preventDefault();
+
+        await handleSave();
+    };
+
+    const handleSaveFromCommand = async () => {
+        await handleSave();
+
+        setOpenCommand((openCommand) => !openCommand);
+    };
+
+    const handleSave = async () => {
+        if (!documentRef.current) return;
 
         const buffer = encodeStateAsUpdateV2(documentRef.current);
 
@@ -113,6 +144,11 @@ export default function Pad({ pathname, initialChangeSet, initialLastUpdate }: I
 
         setHasModification(false);
         setLastUpdate(localizedUpdate);
+
+        toast('Pad saved successfully ✅', {
+            description: localizedUpdate,
+            duration: 3000,
+        });
     };
 
     const handleModification = (text: string | undefined) => {
@@ -122,8 +158,8 @@ export default function Pad({ pathname, initialChangeSet, initialLastUpdate }: I
 
     return (
         <main
-            className="grid h-svh w-svw grid-cols-1 grid-rows-[.2fr,9.6fr,.2fr] gap-2 bg-black p-2"
-            onKeyDown={handleSave}
+            className="grid h-svh w-svw grid-cols-1 grid-rows-[.2fr,9.6fr,.2fr] gap-2 bg-background p-2"
+            onKeyDown={handleSaveFromKeyboard}
         >
             <Header />
 
@@ -137,6 +173,7 @@ export default function Pad({ pathname, initialChangeSet, initialLastUpdate }: I
             <ResizablePanelGroup className={`${!loaded && 'hidden'}`} direction="horizontal">
                 <ResizablePanel>
                     <Editor
+                        className="!bg-accent"
                         defaultLanguage="markdown"
                         onMount={handleMonacoMount}
                         options={{
@@ -153,10 +190,10 @@ export default function Pad({ pathname, initialChangeSet, initialLastUpdate }: I
                     />
                 </ResizablePanel>
 
-                <ResizableHandle className="bg-[#2c2c2c]" />
+                <ResizableHandle className="bg-muted-accent" />
 
                 <ResizablePanel className={`${!loaded && 'hidden'}`}>
-                    <div className="markdown-body h-full overflow-y-scroll bg-[#1e1e1e] p-4">
+                    <div className="markdown-body h-full overflow-y-scroll p-4">
                         <MarkdownRenderer content={content} />
                     </div>
                 </ResizablePanel>
@@ -168,6 +205,22 @@ export default function Pad({ pathname, initialChangeSet, initialLastUpdate }: I
                 lastUpdate={lastUpdate}
                 spectators={concurrentConnections}
             />
+
+            <CommandDialog open={openCommand} onOpenChange={setOpenCommand}>
+                <CommandInput placeholder="Type a command or search..." />
+
+                <CommandList>
+                    <CommandEmpty>No results found.</CommandEmpty>
+
+                    <CommandGroup heading="Suggestions">
+                        <CommandItem onSelect={handleSaveFromCommand}>💾 Save</CommandItem>
+
+                        <CommandItem>📄 Export as PDF</CommandItem>
+
+                        <CommandItem>⌚ See history</CommandItem>
+                    </CommandGroup>
+                </CommandList>
+            </CommandDialog>
         </main>
     );
 }

@@ -26,7 +26,7 @@ export default function Home() {
     }
 
     return (
-        <div className="min-w-577 min-h-365 flex h-svh w-svw flex-col items-center justify-center overflow-auto bg-black text-white">
+        <div className="min-w-577 min-h-365 flex h-svh w-svw flex-col items-center justify-center overflow-auto bg-background">
             <div className="mt-[-60px] flex flex-col items-center justify-center">
                 <h1 className="background-animate bg-gradient-to-r  from-purple-600 via-sky-600 to-blue-600 text-9xl">
                     Mpad
@@ -40,7 +40,7 @@ export default function Home() {
                         <label className="max-w-fit text-end">missopad.com/</label>
 
                         <input
-                            className="ml-2 mr-2 h-[2.25rem] w-64 max-w-64 border-none bg-[#1e1e1e] p-2 outline-none"
+                            className="ml-2 mr-2 h-[2.25rem] w-64 max-w-64 border-none bg-accent p-2 outline-none"
                             placeholder="..."
                             onChange={handlePadChange}
                         />

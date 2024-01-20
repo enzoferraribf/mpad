@@ -7,7 +7,7 @@ interface IStatusBarProps {
 
 export default function StatusBar({ pathname, hasModification, lastUpdate, spectators }: IStatusBarProps) {
     return (
-        <div className="mobile:text-sm flex h-full w-full flex-row justify-between bg-[#1e1e1e] p-4 align-middle">
+        <div className="flex h-full w-full flex-row justify-between bg-accent p-4 align-middle mobile:text-sm">
             <span className="mr-1">
                 {hasModification ? '✏️' : '✅'} {pathname}
             </span>
