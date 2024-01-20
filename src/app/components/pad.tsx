@@ -39,7 +39,6 @@ export default function Pad({ pathname, initialChangeSet, initialLastUpdate }: I
 
     useEffect(() => {
         return () => {
-            bindingRef.current?.awareness?.destroy();
             bindingRef.current?.destroy();
             documentRef.current?.destroy();
             monacoRef.current?.dispose();
