@@ -12,7 +12,8 @@ import { MonacoBinding } from "y-monaco";
 import { handleServerSidePersistence } from "@/app/actions";
 
 import { handleServerDateTime } from "@/app/utils/datetime";
-import StatusBar from "./status-bar";
+
+import StatusBar from "@/app/components/status-bar";
 
 interface IPadProps {
   pathname: string;
@@ -33,10 +34,13 @@ export default function Pad({
     handleServerDateTime(initialLastUpdate)
   );
 
+  const [concurrentConnections, setConcurrentConnections] = useState<number>(1);
+
   const [hasModification, setHasModification] = useState<boolean>(false);
 
   useEffect(() => {
     return () => {
+      bindingRef.current?.awareness?.destroy();
       bindingRef.current?.destroy();
       documentRef.current?.destroy();
       monacoRef.current?.dispose();
@@ -62,6 +66,10 @@ export default function Pad({
 
       const provider = new WebrtcProvider(pathname, ydocument, options);
 
+      provider.awareness.on("change", () =>
+        setConcurrentConnections(provider.awareness.states.size || 1)
+      );
+
       const type = ydocument.getText("monaco");
 
       const model = editor.getModel()!;
@@ -78,6 +86,21 @@ export default function Pad({
       monacoRef.current = editor;
       documentRef.current = ydocument;
       bindingRef.current = binding;
+
+      // Y.js doesn't notify awareness for connection and focus... So, we need this lil hack.
+      editor.setSelection({
+        startColumn: 1,
+        endColumn: 2,
+        startLineNumber: 1,
+        endLineNumber: 1,
+      });
+
+      editor.setSelection({
+        startColumn: 0,
+        endColumn: 0,
+        startLineNumber: 0,
+        endLineNumber: 0,
+      });
     }
   };
 
@@ -124,6 +147,7 @@ export default function Pad({
         pathname={pathname}
         hasModification={hasModification}
         lastUpdate={lastUpdate}
+        spectators={concurrentConnections}
       />
     </div>
   );

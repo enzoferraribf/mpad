@@ -22,12 +22,12 @@ export default async function Page({ params }: IPageProps) {
   const { buffer, lastUpdate } = await getInitialPageContent(slug);
 
   return (
-    <main className="grid grid-rows-13 grid-cols-8 gap-4 h-svh w-svw overflow-hidden p-4">
+    <main className="grid grid-rows-13 grid-cols-8 h-svh w-svw p-4">
       <div className="col-span-8 row-span-2">
         <Header />
       </div>
 
-      <div className="col-span-8 row-span-8">
+      <div className="col-span-8 row-span-12 mt-4">
         <Pad
           pathname={slug}
           initialChangeSet={buffer}
