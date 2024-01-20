@@ -116,7 +116,7 @@ export default function Pad({ pathname, initialChangeSet, initialLastUpdate }: I
 
     return (
         <main
-            className="grid-rows-[.2fr 9.6fr,.2fr] grid h-svh w-svw grid-cols-1 gap-2 bg-black p-2"
+            className="grid h-svh w-svw grid-cols-1 grid-rows-[.2fr,9.6fr,.2fr] gap-2 bg-black p-2"
             onKeyDown={handleSave}
         >
             <Header />
@@ -132,6 +132,7 @@ export default function Pad({ pathname, initialChangeSet, initialLastUpdate }: I
                             fontFamily: 'JetBrains Mono',
                             cursorStyle: 'block-outline',
                             padding: { top: 32, bottom: 32 },
+                            fontSize: 14,
                         }}
                         theme="vs-dark"
                         onChange={handleModification}
