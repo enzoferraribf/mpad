@@ -1,25 +1,20 @@
 interface IStatusBarProps {
-  pathname: string;
-  hasModification: boolean;
-  lastUpdate?: string;
-  spectators?: number;
+    pathname: string;
+    hasModification: boolean;
+    lastUpdate?: string;
+    spectators?: number;
 }
 
-export default function StatusBar({
-  pathname,
-  hasModification,
-  lastUpdate,
-  spectators,
-}: IStatusBarProps) {
-  return (
-    <div className="flex flex-row justify-between align-middle p-3 mt-2 bg-[#1e1e1e]">
-      <span className="mr-1">
-        {hasModification ? "✏️" : "✅"} {pathname}
-      </span>
+export default function StatusBar({ pathname, hasModification, lastUpdate, spectators }: IStatusBarProps) {
+    return (
+        <div className="mobile:text-sm flex h-full w-full flex-row justify-between bg-[#1e1e1e] p-4 align-middle">
+            <span className="mr-1">
+                {hasModification ? '✏️' : '✅'} {pathname}
+            </span>
 
-      {lastUpdate && <span>{lastUpdate} 📅</span>}
+            {lastUpdate && <span>{lastUpdate} 📅</span>}
 
-      {spectators && <span>👀 {spectators}</span>}
-    </div>
-  );
+            {spectators && <span>👀 {spectators}</span>}
+        </div>
+    );
 }

@@ -1,39 +1,23 @@
-import React from "react";
+import React from 'react';
 
-import dynamic from "next/dynamic";
+import dynamic from 'next/dynamic';
 
-import { getInitialPageContent } from "@/app/actions";
+import { getInitialPageContent } from '@/app/actions';
 
-import Header from "@/app/components/header";
-
-const Pad = dynamic(() => import("@/app/components/pad"), { ssr: false });
+const Pad = dynamic(() => import('@/app/components/pad'), { ssr: false });
 
 interface IPageProps {
-  params: { slug: string[] };
+    params: { slug: string[] };
 }
 
 function joinSlug(slug: string[]) {
-  return "/" + slug.join("/");
+    return '/' + slug.join('/');
 }
 
 export default async function Page({ params }: IPageProps) {
-  const slug = joinSlug(params.slug);
+    const slug = joinSlug(params.slug);
 
-  const { buffer, lastUpdate } = await getInitialPageContent(slug);
+    const { buffer, lastUpdate } = await getInitialPageContent(slug);
 
-  return (
-    <main className="grid grid-rows-13 grid-cols-8 h-svh w-svw p-4">
-      <div className="col-span-8 row-span-2">
-        <Header />
-      </div>
-
-      <div className="col-span-8 row-span-12 mt-4">
-        <Pad
-          pathname={slug}
-          initialChangeSet={buffer}
-          initialLastUpdate={lastUpdate}
-        />
-      </div>
-    </main>
-  );
+    return <Pad pathname={slug} initialChangeSet={buffer} initialLastUpdate={lastUpdate} />;
 }
