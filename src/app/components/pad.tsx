@@ -14,6 +14,7 @@ import { handleServerSidePersistence } from "@/app/actions";
 import { handleServerDateTime } from "@/app/utils/datetime";
 
 import StatusBar from "@/app/components/status-bar";
+import MarkdownRenderer from "./markdown-renderer";
 
 interface IPadProps {
   pathname: string;
@@ -38,6 +39,8 @@ export default function Pad({
 
   const [hasModification, setHasModification] = useState<boolean>(false);
 
+  const [content, setContent] = useState<string>("");
+
   useEffect(() => {
     return () => {
       bindingRef.current?.awareness?.destroy();
@@ -58,6 +61,8 @@ export default function Pad({
         const buffer = new Uint8Array(initialChangeSet);
 
         applyUpdateV2(ydocument, buffer);
+
+        setContent(ydocument.getText("monaco").toString());
       }
 
       const signalingServer = process.env.NEXT_PUBLIC_SIGNALING_SERVER!;
@@ -122,26 +127,32 @@ export default function Pad({
     setLastUpdate(handleServerDateTime(lastUpdate));
   };
 
-  const handleModification = (_: string | undefined) => {
+  const handleModification = (text: string | undefined) => {
     setHasModification(true);
+    setContent(text || "");
   };
 
   return (
     <div className="h-full" onKeyDown={handleSave}>
-      <Editor
-        defaultLanguage="markdown"
-        onMount={handleMonacoMount}
-        options={{
-          minimap: { enabled: false },
-          lineHeight: 1.8,
-          fontFamily: "JetBrains Mono",
-          cursorStyle: "block-outline",
-          padding: { top: 32, bottom: 32 },
-        }}
-        theme="vs-dark"
-        height="95%"
-        onChange={handleModification}
-      />
+      <div className="grid grid-cols-2 grid-rows-1 gap-2 h-[90svh]">
+        <Editor
+          defaultLanguage="markdown"
+          onMount={handleMonacoMount}
+          options={{
+            minimap: { enabled: false },
+            lineHeight: 1.8,
+            fontFamily: "JetBrains Mono",
+            cursorStyle: "block-outline",
+            padding: { top: 32, bottom: 32 },
+          }}
+          theme="vs-dark"
+          onChange={handleModification}
+        />
+
+        <div className="p-4 bg-[#1e1e1e] markdown-body overflow-y-scroll">
+          <MarkdownRenderer content={content} />
+        </div>
+      </div>
 
       <StatusBar
         pathname={pathname}

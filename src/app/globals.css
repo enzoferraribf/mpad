@@ -28,3 +28,8 @@ main {
   left: -4px;
   top: -5px;
 }
+
+.markdown-body {
+  background-color: #1e1e1e !important;
+  font-family: JetBrains Mono !important;
+}

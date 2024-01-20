@@ -41,8 +41,6 @@ export async function handleServerSidePersistence(
 
   const utcLastUpdate = lastUpdate ? lastUpdate + "Z" : "";
 
-  console.log(utcLastUpdate);
-
   await transaction.commit();
 
   return {
@@ -52,7 +50,7 @@ export async function handleServerSidePersistence(
 
 export async function getInitialPageContent(pad: string) {
   const set = await client.execute({
-    sql: "SELECT change, created_at FROM pad_history WHERE id = ? ORDER BY created_at DESC",
+    sql: "SELECT change, created_at FROM pad_history WHERE id = ? ORDER BY created_at ASC",
     args: [pad],
   });
 
@@ -70,6 +68,7 @@ export async function getInitialPageContent(pad: string) {
     if (!row) continue;
 
     const change = row["change"] as string;
+
     lastUpdate = row["created_at"] as number;
 
     const buffer = stringToBuffer(change);
