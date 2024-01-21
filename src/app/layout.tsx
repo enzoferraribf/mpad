@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 
 import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 import { JetBrains_Mono } from 'next/font/google';
 
@@ -28,6 +29,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
                     {children}
                     <Toaster />
                     <Analytics />
+                    <SpeedInsights />
                 </ThemeProvider>
             </body>
         </html>
