@@ -52,7 +52,7 @@ export async function handleServerSidePersistence(pad: string, buffer: number[])
 export async function getInitialPageContent(pad: string) {
     const cached = await kv.get<{ buffer: number[]; utcLastUpdate: string }>(pad);
 
-    if (cached) return cached;
+    if (cached) return { buffer: cached.buffer, lastUpdate: cached.utcLastUpdate };
 
     const set = await client.execute({
         sql: 'SELECT change, created_at FROM pad_history WHERE id = ? ORDER BY created_at ASC',
