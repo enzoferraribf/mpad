@@ -1,5 +1,7 @@
 'use server';
 
+import { kv } from '@vercel/kv';
+
 import { createClient } from '@libsql/client';
 
 import { diffUpdateV2, mergeUpdatesV2 } from 'yjs';
@@ -22,9 +24,9 @@ export async function handleServerSidePersistence(pad: string, buffer: number[])
     if (set.rows && set.rows[0]) {
         const remote = set.rows[0]['change'] as string;
 
-        const buffer = stringToBuffer(remote);
+        const remoteBuffer = stringToBuffer(remote);
 
-        diff = diffUpdateV2(diff, buffer);
+        diff = diffUpdateV2(diff, remoteBuffer);
     }
 
     const commaSeparatedArray = diff.join(',');
@@ -38,6 +40,8 @@ export async function handleServerSidePersistence(pad: string, buffer: number[])
 
     const utcLastUpdate = lastUpdate ? lastUpdate + 'Z' : '';
 
+    await kv.set(pad, { buffer, utcLastUpdate }, { ex: 86400 * 7 });
+
     await transaction.commit();
 
     return {
@@ -46,6 +50,10 @@ export async function handleServerSidePersistence(pad: string, buffer: number[])
 }
 
 export async function getInitialPageContent(pad: string) {
+    const cached = await kv.get<{ buffer: number[]; utcLastUpdate: string }>(pad);
+
+    if (cached) return cached;
+
     const set = await client.execute({
         sql: 'SELECT change, created_at FROM pad_history WHERE id = ? ORDER BY created_at ASC',
         args: [pad],
@@ -76,6 +84,8 @@ export async function getInitialPageContent(pad: string) {
     const buffer = Array.from(mergeUpdatesV2(changeSet));
 
     const utcLastUpdate = lastUpdate ? lastUpdate + 'Z' : '';
+
+    await kv.set(pad, { buffer, utcLastUpdate }, { ex: 86400 * 7 });
 
     return {
         buffer,
