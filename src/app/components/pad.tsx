@@ -22,6 +22,7 @@ import StatusBar from '@/app/components/status-bar';
 import { CommandDialog } from '@/app/components/command';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/app/components/resizable';
 import { CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/app/components/command';
+import { useTheme } from 'next-themes';
 
 interface IPadProps {
     pathname: string;
@@ -33,6 +34,8 @@ export default function Pad({ pathname, initialChangeSet, initialLastUpdate }: I
     const monacoRef = useRef<editor.IStandaloneCodeEditor>();
     const bindingRef = useRef<MonacoBinding>();
     const documentRef = useRef<Doc>();
+
+    const { theme, setTheme } = useTheme();
 
     const [lastUpdate, setLastUpdate] = useState<string>(handleServerDateTime(initialLastUpdate));
 
@@ -176,6 +179,11 @@ export default function Pad({ pathname, initialChangeSet, initialLastUpdate }: I
         setOpenCommand((openCommand) => !openCommand);
     };
 
+    const handleTheme = (theme: 'light' | 'dark') => {
+        setTheme(theme);
+        setOpenCommand((openCommand) => !openCommand);
+    };
+
     const handleModification = (text: string | undefined) => {
         setHasModification(true);
         setContent(text || '');
@@ -213,7 +221,7 @@ export default function Pad({ pathname, initialChangeSet, initialLastUpdate }: I
                             padding: { top: 32, bottom: 32 },
                             fontSize: 14,
                         }}
-                        theme="vs-dark"
+                        theme={theme === 'dark' ? 'vs-dark' : 'light'}
                         onChange={handleModification}
                         loading={false}
                     />
@@ -269,6 +277,22 @@ export default function Pad({ pathname, initialChangeSet, initialLastUpdate }: I
                             <div className="space-y-5">
                                 <h1 className="font-bold">💾 Save</h1>
                                 <span className="text-xs">Persists the pad content on the remote storage.</span>
+                            </div>
+                        </CommandItem>
+                    </CommandGroup>
+
+                    <CommandGroup heading="Themes">
+                        <CommandItem onSelect={() => handleTheme('dark')}>
+                            <div className="space-y-5">
+                                <h1 className="font-bold">🌙 Dark</h1>
+                                <span className="text-xs">Changes Mpad to dark mode.</span>
+                            </div>
+                        </CommandItem>
+
+                        <CommandItem onSelect={() => handleTheme('light')}>
+                            <div className="space-y-5">
+                                <h1 className="font-bold">☀️ Light</h1>
+                                <span className="text-xs">Changes Mpad to light mode.</span>
                             </div>
                         </CommandItem>
                     </CommandGroup>
