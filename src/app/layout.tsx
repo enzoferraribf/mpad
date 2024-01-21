@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 
+import { Analytics } from '@vercel/analytics/react';
+
 import { JetBrains_Mono } from 'next/font/google';
 
 import './globals.css';
@@ -25,6 +27,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
                 <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
                     {children}
                     <Toaster />
+                    <Analytics />
                 </ThemeProvider>
             </body>
         </html>
