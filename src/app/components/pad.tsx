@@ -186,7 +186,9 @@ export default function Pad({ pathname, initialChangeSet, initialLastUpdate }: I
             className="grid h-svh w-svw grid-cols-1 grid-rows-[.2fr,9.6fr,.2fr] gap-2 bg-background p-2"
             onKeyDown={handleSaveFromKeyboard}
         >
-            <Header />
+            <div onClick={() => setOpenCommand((openCommand) => !openCommand)}>
+                <Header />
+            </div>
 
             {/* Since we can't dynamically create the editor, we need this hidden hack to make sure that we have a proper loading screen */}
             <div className={`${loaded && 'hidden'} flex items-center justify-center`}>
