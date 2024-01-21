@@ -72,11 +72,13 @@ export default function Pad({ pathname, initialChangeSet, initialLastUpdate }: I
         };
     }, []);
 
-    const [windowSize, setWindowSize] = useState([window.innerWidth, window.innerHeight]);
+    const [windowSize, setWindowSize] = useState<{ width: number; height: number }>({ width: 0, height: 0 });
 
     useEffect(() => {
+        setWindowSize({ width: window.innerWidth, height: window.innerHeight });
+
         const handleWindowResize = () => {
-            setWindowSize([window.innerWidth, window.innerHeight]);
+            setWindowSize({ width: window.innerWidth, height: window.innerHeight });
         };
 
         window.addEventListener('resize', handleWindowResize);
@@ -195,7 +197,7 @@ export default function Pad({ pathname, initialChangeSet, initialLastUpdate }: I
 
             <ResizablePanelGroup
                 className={`${!loaded && 'hidden'}`}
-                direction={windowSize[0] >= 640 ? 'horizontal' : 'vertical'}
+                direction={windowSize.width >= 768 ? 'horizontal' : 'vertical'}
             >
                 <ResizablePanel className={`${layout === 'preview' && 'hidden'}`}>
                     <Editor
