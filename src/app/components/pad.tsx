@@ -3,7 +3,10 @@
 import React, { KeyboardEvent, useEffect, useRef, useState } from 'react';
 
 import Editor, { Monaco } from '@monaco-editor/react';
+
 import { editor } from 'monaco-editor';
+
+import { toast } from 'sonner';
 
 import { Doc, applyUpdateV2, encodeStateAsUpdateV2 } from 'yjs';
 import { WebrtcProvider } from 'y-webrtc';
@@ -19,7 +22,6 @@ import StatusBar from '@/app/components/status-bar';
 import { CommandDialog } from '@/app/components/command';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/app/components/resizable';
 import { CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/app/components/command';
-import { toast } from 'sonner';
 
 interface IPadProps {
     pathname: string;
@@ -44,6 +46,8 @@ export default function Pad({ pathname, initialChangeSet, initialLastUpdate }: I
 
     const [openCommand, setOpenCommand] = useState<boolean>(false);
 
+    const [layout, setLayout] = useState<'editor' | 'preview' | 'default'>('default');
+
     useEffect(() => {
         return () => {
             bindingRef.current?.destroy();
@@ -65,6 +69,20 @@ export default function Pad({ pathname, initialChangeSet, initialLastUpdate }: I
 
         return () => {
             window.removeEventListener('keydown', handleCommandOpen);
+        };
+    }, []);
+
+    const [windowSize, setWindowSize] = useState([window.innerWidth, window.innerHeight]);
+
+    useEffect(() => {
+        const handleWindowResize = () => {
+            setWindowSize([window.innerWidth, window.innerHeight]);
+        };
+
+        window.addEventListener('resize', handleWindowResize);
+
+        return () => {
+            window.removeEventListener('resize', handleWindowResize);
         };
     }, []);
 
@@ -151,6 +169,11 @@ export default function Pad({ pathname, initialChangeSet, initialLastUpdate }: I
         });
     };
 
+    const handleLayout = (layout: 'editor' | 'preview' | 'default') => {
+        setLayout(layout);
+        setOpenCommand((openCommand) => !openCommand);
+    };
+
     const handleModification = (text: string | undefined) => {
         setHasModification(true);
         setContent(text || '');
@@ -170,10 +193,12 @@ export default function Pad({ pathname, initialChangeSet, initialLastUpdate }: I
                 </h1>
             </div>
 
-            <ResizablePanelGroup className={`${!loaded && 'hidden'}`} direction="horizontal">
-                <ResizablePanel>
+            <ResizablePanelGroup
+                className={`${!loaded && 'hidden'}`}
+                direction={windowSize[0] >= 640 ? 'horizontal' : 'vertical'}
+            >
+                <ResizablePanel className={`${layout === 'preview' && 'hidden'}`}>
                     <Editor
-                        className="!bg-accent"
                         defaultLanguage="markdown"
                         onMount={handleMonacoMount}
                         options={{
@@ -190,9 +215,9 @@ export default function Pad({ pathname, initialChangeSet, initialLastUpdate }: I
                     />
                 </ResizablePanel>
 
-                <ResizableHandle className="bg-muted-accent" />
+                <ResizableHandle className={`${layout !== 'default' && 'hidden'} bg-muted-accent`} />
 
-                <ResizablePanel className={`${!loaded && 'hidden'}`}>
+                <ResizablePanel className={`${(!loaded || layout === 'editor') && 'hidden'}`}>
                     <div className="markdown-body h-full overflow-y-scroll p-4">
                         <MarkdownRenderer content={content} />
                     </div>
@@ -212,12 +237,36 @@ export default function Pad({ pathname, initialChangeSet, initialLastUpdate }: I
                 <CommandList>
                     <CommandEmpty>No results found.</CommandEmpty>
 
-                    <CommandGroup heading="Suggestions">
-                        <CommandItem onSelect={handleSaveFromCommand}>💾 Save</CommandItem>
+                    <CommandGroup heading="Layout">
+                        <CommandItem onSelect={() => handleLayout('editor')}>
+                            <div className="space-y-5">
+                                <h1 className="font-bold">✏️ Editor</h1>
+                                <span className="text-xs">Changes the Mpad view to edit-only.</span>
+                            </div>
+                        </CommandItem>
 
-                        <CommandItem>📄 Export as PDF</CommandItem>
+                        <CommandItem onSelect={() => handleLayout('preview')}>
+                            <div className="space-y-5">
+                                <h1 className="font-bold">📄 Preview</h1>
+                                <span className="text-xs">Changes the Mpad view to preview-only.</span>
+                            </div>
+                        </CommandItem>
 
-                        <CommandItem>⌚ See history</CommandItem>
+                        <CommandItem onSelect={() => handleLayout('default')}>
+                            <div className="space-y-5">
+                                <h1 className="font-bold">✏️📄 Editor+Preview</h1>
+                                <span className="text-xs">Changes the Mpad view to default.</span>
+                            </div>
+                        </CommandItem>
+                    </CommandGroup>
+
+                    <CommandGroup heading="Actions">
+                        <CommandItem onSelect={handleSaveFromCommand}>
+                            <div className="space-y-5">
+                                <h1 className="font-bold">💾 Save</h1>
+                                <span className="text-xs">Persists the pad content on the remote storage.</span>
+                            </div>
+                        </CommandItem>
                     </CommandGroup>
                 </CommandList>
             </CommandDialog>

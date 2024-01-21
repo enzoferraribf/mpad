@@ -49,8 +49,8 @@
         --popover: 360, 100%, 0%;
         --popover-foreground: 360, 100%, 100%%;
 
-        --border: 360, 100%, 10%;
-        --input: 360, 100%, 10%;
+        --border: 0 0% 12%;
+        --input: 0 0% 12%;
 
         --card: 224 71% 4%;
         --card-foreground: 213 31% 91%;
