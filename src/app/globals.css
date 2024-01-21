@@ -74,6 +74,7 @@
     .markdown-body,
     [data-theme='light'] {
         --color-fg-default: var(--foreground) !important;
+        --color-canvas-subtle: var(--background) !important;
     }
 }
 
@@ -81,6 +82,7 @@
     .markdown-body,
     [data-theme='dark'] {
         --color-fg-default: var(--foreground) !important;
+        --color-canvas-subtle: var(--background) !important;
     }
 }
 

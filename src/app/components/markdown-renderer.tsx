@@ -2,12 +2,14 @@
 
 import RemarkGfm from 'remark-gfm';
 
+import { useTheme } from 'next-themes';
+
 import RemarkBreaks from 'remark-breaks';
 
 import ReactMarkdown from 'react-markdown';
 
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { darcula } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { darcula, oneLight } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 import 'github-markdown-css';
 
@@ -16,6 +18,8 @@ interface MarkdownRendererProps {
 }
 
 export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
+    const { theme } = useTheme();
+
     return (
         <ReactMarkdown
             children={content}
@@ -30,7 +34,7 @@ export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
                                 PreTag="div"
                                 children={String(children).replace(/\n$/, '')}
                                 language={match[1]}
-                                style={darcula}
+                                style={theme === 'dark' ? darcula : oneLight}
                             />
                         );
                     }
