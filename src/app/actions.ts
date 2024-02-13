@@ -93,6 +93,30 @@ export async function getInitialPageContent(pad: string) {
     };
 }
 
+export async function getPadsWithPrefix(pad: string) {
+    const likeRoot = `/${pad}/%`;
+    const scapedPad = `/${pad}`;
+
+    const set = await client.execute({
+        sql: 'SELECT DISTINCT id FROM pad_history WHERE id LIKE $likeRoot OR id = $pad',
+        args: { likeRoot, pad: scapedPad },
+    });
+
+    const rows: string[] = [];
+
+    if (!set.rows) return rows;
+
+    for (const row of set.rows) {
+        if (!row) continue;
+
+        const id = row['id'] as string;
+
+        rows.push(id);
+    }
+
+    return rows;
+}
+
 function stringToBuffer(change: string) {
     const array: number[] = [];
 

@@ -2,6 +2,9 @@
 
 import React, { KeyboardEvent, useEffect, useRef, useState } from 'react';
 
+import { useTheme } from 'next-themes';
+import { useRouter } from 'next/navigation';
+
 import Editor, { Monaco } from '@monaco-editor/react';
 
 import { editor } from 'monaco-editor';
@@ -22,20 +25,21 @@ import StatusBar from '@/app/components/status-bar';
 import { CommandDialog } from '@/app/components/command';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/app/components/resizable';
 import { CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/app/components/command';
-import { useTheme } from 'next-themes';
+import { Badge } from './badge';
 
 interface IPadProps {
     pathname: string;
     initialChangeSet: number[] | null;
     initialLastUpdate: string | null;
+    relatedPads: string[];
 }
 
-export default function Pad({ pathname, initialChangeSet, initialLastUpdate }: IPadProps) {
+export default function Pad({ pathname, initialChangeSet, initialLastUpdate, relatedPads }: IPadProps) {
     const monacoRef = useRef<editor.IStandaloneCodeEditor>();
     const bindingRef = useRef<MonacoBinding>();
     const documentRef = useRef<Doc>();
 
-    const { theme, setTheme } = useTheme();
+    const { setTheme, resolvedTheme } = useTheme();
 
     const [lastUpdate, setLastUpdate] = useState<string>(handleServerDateTime(initialLastUpdate));
 
@@ -50,6 +54,10 @@ export default function Pad({ pathname, initialChangeSet, initialLastUpdate }: I
     const [openCommand, setOpenCommand] = useState<boolean>(false);
 
     const [layout, setLayout] = useState<'editor' | 'preview' | 'default'>('default');
+
+    const [explorerOpen, setExplorerOpen] = useState<boolean>(false);
+
+    const { push } = useRouter();
 
     useEffect(() => {
         return () => {
@@ -72,6 +80,22 @@ export default function Pad({ pathname, initialChangeSet, initialLastUpdate }: I
 
         return () => {
             window.removeEventListener('keydown', handleCommandOpen);
+        };
+    }, []);
+
+    useEffect(() => {
+        const handleExplorerOpen = (event: globalThis.KeyboardEvent) => {
+            if (!event.ctrlKey || event.key !== 'b') return;
+
+            event.preventDefault();
+
+            setExplorerOpen((explorerOpen) => !explorerOpen);
+        };
+
+        window.addEventListener('keydown', handleExplorerOpen);
+
+        return () => {
+            window.removeEventListener('keydown', handleExplorerOpen);
         };
     }, []);
 
@@ -174,6 +198,15 @@ export default function Pad({ pathname, initialChangeSet, initialLastUpdate }: I
         });
     };
 
+    const handleFiles = (_: 'explorer') => {
+        setExplorerOpen(true);
+        setOpenCommand((openCommand) => !openCommand);
+    };
+
+    const handleNavigation = (pad: string) => {
+        push(pad);
+    };
+
     const handleLayout = (layout: 'editor' | 'preview' | 'default') => {
         setLayout(layout);
         setOpenCommand((openCommand) => !openCommand);
@@ -187,6 +220,38 @@ export default function Pad({ pathname, initialChangeSet, initialLastUpdate }: I
     const handleModification = (text: string | undefined) => {
         setHasModification(true);
         setContent(text || '');
+    };
+
+    const RelatedPads = () => {
+        return (
+            <>
+                {relatedPads.map((relatedPad, index) => {
+                    const paths = relatedPad.split('/');
+
+                    return (
+                        <CommandItem key={index} onSelect={() => handleNavigation(relatedPad)}>
+                            <div key={index} className="flex flex-row space-x-2 text-sm">
+                                <BadgedPads paths={paths} />
+                            </div>
+                        </CommandItem>
+                    );
+                })}
+            </>
+        );
+    };
+
+    const BadgedPads = ({ paths }: { paths: string[] }) => {
+        return (
+            <>
+                {paths.map((path, index) => {
+                    if (!path) return;
+
+                    if (index !== paths.length - 1) return <Badge key={index}>{path}</Badge>;
+
+                    return <p key={index}>{path}</p>;
+                })}
+            </>
+        );
     };
 
     return (
@@ -221,7 +286,7 @@ export default function Pad({ pathname, initialChangeSet, initialLastUpdate }: I
                             padding: { top: 32, bottom: 32 },
                             fontSize: 14,
                         }}
-                        theme={theme === 'dark' ? 'vs-dark' : 'light'}
+                        theme={resolvedTheme === 'dark' ? 'vs-dark' : 'light'}
                         onChange={handleModification}
                         loading={false}
                     />
@@ -248,6 +313,15 @@ export default function Pad({ pathname, initialChangeSet, initialLastUpdate }: I
 
                 <CommandList>
                     <CommandEmpty>No results found.</CommandEmpty>
+
+                    <CommandGroup heading="Files">
+                        <CommandItem onSelect={() => handleFiles('explorer')}>
+                            <div className="space-y-5">
+                                <h1 className="font-bold">📁 Explorer</h1>
+                                <span className="text-xs">{"View this pad's file structure."}</span>
+                            </div>
+                        </CommandItem>
+                    </CommandGroup>
 
                     <CommandGroup heading="Layout">
                         <CommandItem onSelect={() => handleLayout('editor')}>
@@ -297,6 +371,14 @@ export default function Pad({ pathname, initialChangeSet, initialLastUpdate }: I
                         </CommandItem>
                     </CommandGroup>
                 </CommandList>
+            </CommandDialog>
+
+            <CommandDialog open={explorerOpen} onOpenChange={(open) => setExplorerOpen(open)}>
+                <CommandInput placeholder="Search for a pad..." />
+
+                <CommandGroup heading="Pads">
+                    <RelatedPads />
+                </CommandGroup>
             </CommandDialog>
         </main>
     );

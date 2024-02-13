@@ -2,7 +2,7 @@ import React from 'react';
 
 import dynamic from 'next/dynamic';
 
-import { getInitialPageContent } from '@/app/actions';
+import { getPadsWithPrefix, getInitialPageContent } from '@/app/actions';
 
 const Pad = dynamic(() => import('@/app/components/pad'), { ssr: true });
 
@@ -19,5 +19,7 @@ export default async function Page({ params }: IPageProps) {
 
     const { buffer, lastUpdate } = await getInitialPageContent(slug);
 
-    return <Pad pathname={slug} initialChangeSet={buffer} initialLastUpdate={lastUpdate} />;
+    const relatedPads = await getPadsWithPrefix(params.slug[0]);
+
+    return <Pad pathname={slug} initialChangeSet={buffer} initialLastUpdate={lastUpdate} relatedPads={relatedPads} />;
 }
