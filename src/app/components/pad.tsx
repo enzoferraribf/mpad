@@ -22,10 +22,10 @@ import { handleServerDateTime } from '@/app/utils/datetime';
 import Header from '@/app/components/header';
 import MarkdownRenderer from '@/app/components/markdown-renderer';
 import StatusBar from '@/app/components/status-bar';
+import { Badge } from '@/app/components/badge';
 import { CommandDialog } from '@/app/components/command';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/app/components/resizable';
 import { CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/app/components/command';
-import { Badge } from './badge';
 
 interface IPadProps {
     pathname: string;
@@ -73,7 +73,7 @@ export default function Pad({ pathname, initialChangeSet, initialLastUpdate, rel
 
             event.preventDefault();
 
-            setOpenCommand((openCommand) => !openCommand);
+            setOpenCommand(openCommand => !openCommand);
         };
 
         window.addEventListener('keydown', handleCommandOpen);
@@ -89,7 +89,7 @@ export default function Pad({ pathname, initialChangeSet, initialLastUpdate, rel
 
             event.preventDefault();
 
-            setExplorerOpen((explorerOpen) => !explorerOpen);
+            setExplorerOpen(explorerOpen => !explorerOpen);
         };
 
         window.addEventListener('keydown', handleExplorerOpen);
@@ -177,7 +177,7 @@ export default function Pad({ pathname, initialChangeSet, initialLastUpdate, rel
     const handleSaveFromCommand = async () => {
         await handleSave();
 
-        setOpenCommand((openCommand) => !openCommand);
+        setOpenCommand(openCommand => !openCommand);
     };
 
     const handleSave = async () => {
@@ -198,9 +198,9 @@ export default function Pad({ pathname, initialChangeSet, initialLastUpdate, rel
         });
     };
 
-    const handleFiles = (_: 'explorer') => {
+    const handleFiles = () => {
         setExplorerOpen(true);
-        setOpenCommand((openCommand) => !openCommand);
+        setOpenCommand(openCommand => !openCommand);
     };
 
     const handleNavigation = (pad: string) => {
@@ -209,12 +209,12 @@ export default function Pad({ pathname, initialChangeSet, initialLastUpdate, rel
 
     const handleLayout = (layout: 'editor' | 'preview' | 'default') => {
         setLayout(layout);
-        setOpenCommand((openCommand) => !openCommand);
+        setOpenCommand(openCommand => !openCommand);
     };
 
     const handleTheme = (theme: 'light' | 'dark') => {
         setTheme(theme);
-        setOpenCommand((openCommand) => !openCommand);
+        setOpenCommand(openCommand => !openCommand);
     };
 
     const handleModification = (text: string | undefined) => {
@@ -222,52 +222,18 @@ export default function Pad({ pathname, initialChangeSet, initialLastUpdate, rel
         setContent(text || '');
     };
 
-    const RelatedPads = () => {
-        return (
-            <>
-                {relatedPads.map((relatedPad, index) => {
-                    const paths = relatedPad.split('/');
-
-                    return (
-                        <CommandItem key={index} onSelect={() => handleNavigation(relatedPad)}>
-                            <div key={index} className="flex flex-row space-x-2 truncate text-sm">
-                                <span hidden>{relatedPad}</span>
-
-                                {paths.map((path, index) => {
-                                    if (!path) return;
-
-                                    if (index !== paths.length - 1) return <Badge key={index}>{path}</Badge>;
-
-                                    return <p key={index}>{path}</p>;
-                                })}
-                            </div>
-                        </CommandItem>
-                    );
-                })}
-            </>
-        );
-    };
-
     return (
-        <main
-            className="grid h-svh w-svw grid-cols-1 grid-rows-[.2fr,9.6fr,.2fr] gap-2 bg-background p-2"
-            onKeyDown={handleSaveFromKeyboard}
-        >
-            <div onClick={() => setOpenCommand((openCommand) => !openCommand)}>
+        <main className="grid h-svh w-svw grid-cols-1 grid-rows-[.2fr,9.6fr,.2fr] gap-2 bg-background p-2" onKeyDown={handleSaveFromKeyboard}>
+            <div onClick={() => setOpenCommand(openCommand => !openCommand)}>
                 <Header />
             </div>
 
             {/* Since we can't dynamically create the editor, we need this hidden hack to make sure that we have a proper loading screen */}
             <div className={`${loaded && 'hidden'} flex items-center justify-center`}>
-                <h1 className="background-animate bg-gradient-to-r  from-purple-600 via-sky-600 to-blue-600 text-9xl">
-                    Mpad
-                </h1>
+                <h1 className="background-animate bg-gradient-to-r  from-purple-600 via-sky-600 to-blue-600 text-9xl">Mpad</h1>
             </div>
 
-            <ResizablePanelGroup
-                className={`${!loaded && 'hidden'}`}
-                direction={windowSize.width >= 768 ? 'horizontal' : 'vertical'}
-            >
+            <ResizablePanelGroup className={`${!loaded && 'hidden'}`} direction={windowSize.width >= 768 ? 'horizontal' : 'vertical'}>
                 <ResizablePanel className={`${layout === 'preview' && 'hidden'}`}>
                     <Editor
                         defaultLanguage="markdown"
@@ -295,12 +261,7 @@ export default function Pad({ pathname, initialChangeSet, initialLastUpdate, rel
                 </ResizablePanel>
             </ResizablePanelGroup>
 
-            <StatusBar
-                pathname={pathname}
-                hasModification={hasModification}
-                lastUpdate={lastUpdate}
-                spectators={concurrentConnections}
-            />
+            <StatusBar pathname={pathname} hasModification={hasModification} lastUpdate={lastUpdate} spectators={concurrentConnections} />
 
             <CommandDialog open={openCommand} onOpenChange={setOpenCommand}>
                 <CommandInput placeholder="Type a command or search..." />
@@ -309,7 +270,7 @@ export default function Pad({ pathname, initialChangeSet, initialLastUpdate, rel
                     <CommandEmpty>No results found.</CommandEmpty>
 
                     <CommandGroup heading="Files">
-                        <CommandItem onSelect={() => handleFiles('explorer')}>
+                        <CommandItem onSelect={() => handleFiles()}>
                             <div className="space-y-5">
                                 <h1 className="font-bold">📁 Explorer</h1>
                                 <span className="text-xs">{"View this pad's file structure."}</span>
@@ -367,11 +328,27 @@ export default function Pad({ pathname, initialChangeSet, initialLastUpdate, rel
                 </CommandList>
             </CommandDialog>
 
-            <CommandDialog open={explorerOpen} onOpenChange={(open) => setExplorerOpen(open)}>
-                <CommandInput placeholder="Search for a pad..." />
+            <CommandDialog open={explorerOpen} onOpenChange={open => setExplorerOpen(open)}>
+                <CommandInput placeholder="Search for a Pad..." />
 
                 <CommandGroup heading="Pads">
-                    <RelatedPads />
+                    {relatedPads.map((related, index) => {
+                        const paths = related.split('/').filter(path => path);
+                        const lastPath = paths.pop();
+
+                        return (
+                            <CommandItem key={index} onSelect={() => handleNavigation(related)}>
+                                <div key={index} className="flex flex-row space-x-2 truncate text-sm">
+                                    {/* Search seems to be based on inner elements. I added this hidden span so the search works with the full path */}
+                                    <span hidden>{related}</span>
+
+                                    {paths.map((path, index) => <Badge key={index}>{path}</Badge>)}
+
+                                    <p key={index}>{lastPath}</p>
+                                </div>
+                            </CommandItem>
+                        );
+                    })}
                 </CommandGroup>
             </CommandDialog>
         </main>
