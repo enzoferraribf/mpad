@@ -230,25 +230,19 @@ export default function Pad({ pathname, initialChangeSet, initialLastUpdate, rel
 
                     return (
                         <CommandItem key={index} onSelect={() => handleNavigation(relatedPad)}>
-                            <div key={index} className="flex flex-row space-x-2 text-sm">
-                                <BadgedPads paths={paths} />
+                            <div key={index} className="flex flex-row space-x-2 truncate text-sm">
+                                <span hidden>{relatedPad}</span>
+
+                                {paths.map((path, index) => {
+                                    if (!path) return;
+
+                                    if (index !== paths.length - 1) return <Badge key={index}>{path}</Badge>;
+
+                                    return <p key={index}>{path}</p>;
+                                })}
                             </div>
                         </CommandItem>
                     );
-                })}
-            </>
-        );
-    };
-
-    const BadgedPads = ({ paths }: { paths: string[] }) => {
-        return (
-            <>
-                {paths.map((path, index) => {
-                    if (!path) return;
-
-                    if (index !== paths.length - 1) return <Badge key={index}>{path}</Badge>;
-
-                    return <p key={index}>{path}</p>;
                 })}
             </>
         );
