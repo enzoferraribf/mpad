@@ -1,6 +1,6 @@
 'use client';
 
-import React, { KeyboardEvent, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import { useTheme } from 'next-themes';
 import { useRouter } from 'next/navigation';
@@ -9,15 +9,13 @@ import Editor, { Monaco } from '@monaco-editor/react';
 
 import { editor } from 'monaco-editor';
 
-import { toast } from 'sonner';
-
-import { Doc, applyUpdateV2, encodeStateAsUpdateV2 } from 'yjs';
-import { WebrtcProvider } from 'y-webrtc';
+import { Doc, applyUpdateV2 } from 'yjs';
+import { WebsocketProvider } from 'y-websocket';
 import { MonacoBinding } from 'y-monaco';
 
-import { handleServerSidePersistence } from '@/app/actions';
-
 import { handleServerDateTime } from '@/app/utils/datetime';
+
+import { lastUpdated } from '@/app/actions/pad';
 
 import Header from '@/app/components/header';
 import MarkdownRenderer from '@/app/components/markdown-renderer';
@@ -29,19 +27,19 @@ import { CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } fr
 
 interface IPadProps {
     pathname: string;
-    initialChangeSet: number[] | null;
-    initialLastUpdate: string | null;
-    relatedPads: string[];
+    initialContent: number[] | null;
+    initialLastUpdate: number | null;
+    related: string[];
 }
 
-export default function Pad({ pathname, initialChangeSet, initialLastUpdate, relatedPads }: IPadProps) {
+export default function Pad({ pathname, initialContent, initialLastUpdate, related }: IPadProps) {
     const monacoRef = useRef<editor.IStandaloneCodeEditor>();
     const bindingRef = useRef<MonacoBinding>();
     const documentRef = useRef<Doc>();
 
     const { setTheme, resolvedTheme } = useTheme();
 
-    const [lastUpdate, setLastUpdate] = useState<string>(handleServerDateTime(initialLastUpdate));
+    const [localLastUpdate, setLocalLastUpdate] = useState<string>(handleServerDateTime(initialLastUpdate));
 
     const [concurrentConnections, setConcurrentConnections] = useState<number>(1);
 
@@ -66,6 +64,16 @@ export default function Pad({ pathname, initialChangeSet, initialLastUpdate, rel
             monacoRef.current?.dispose();
         };
     }, []);
+
+    useEffect(() => {
+        const interval = setInterval(async () => {
+            const serverLastUpdate = await lastUpdated(pathname);
+
+            setLocalLastUpdate(handleServerDateTime(serverLastUpdate));
+        }, 3_000);
+
+        return () => clearInterval(interval);
+    }, [pathname]);
 
     useEffect(() => {
         const handleCommandOpen = (event: globalThis.KeyboardEvent) => {
@@ -119,8 +127,8 @@ export default function Pad({ pathname, initialChangeSet, initialLastUpdate, rel
         if (typeof window !== 'undefined') {
             const ydocument = new Doc();
 
-            if (initialChangeSet) {
-                const buffer = new Uint8Array(initialChangeSet);
+            if (initialContent) {
+                const buffer = new Uint8Array(initialContent);
 
                 applyUpdateV2(ydocument, buffer);
 
@@ -129,9 +137,7 @@ export default function Pad({ pathname, initialChangeSet, initialLastUpdate, rel
 
             const signalingServer = process.env.NEXT_PUBLIC_SIGNALING_SERVER!;
 
-            const options = { signaling: [signalingServer] };
-
-            const provider = new WebrtcProvider(pathname, ydocument, options);
+            const provider = new WebsocketProvider(signalingServer, pathname, ydocument);
 
             provider.awareness.on('change', () => setConcurrentConnections(provider.awareness.states.size || 1));
 
@@ -166,38 +172,6 @@ export default function Pad({ pathname, initialChangeSet, initialLastUpdate, rel
         }
     };
 
-    const handleSaveFromKeyboard = async (event: KeyboardEvent<HTMLElement>) => {
-        if (!event.ctrlKey || event.key !== 's') return;
-
-        event.preventDefault();
-
-        await handleSave();
-    };
-
-    const handleSaveFromCommand = async () => {
-        await handleSave();
-
-        setOpenCommand(openCommand => !openCommand);
-    };
-
-    const handleSave = async () => {
-        if (!documentRef.current) return;
-
-        const buffer = encodeStateAsUpdateV2(documentRef.current);
-
-        const { lastUpdate } = await handleServerSidePersistence(pathname, Array.from(buffer));
-
-        const localizedUpdate = handleServerDateTime(lastUpdate);
-
-        setHasModification(false);
-        setLastUpdate(localizedUpdate);
-
-        toast('Pad saved successfully ✅', {
-            description: localizedUpdate,
-            duration: 3000,
-        });
-    };
-
     const handleFiles = () => {
         setExplorerOpen(true);
         setOpenCommand(openCommand => !openCommand);
@@ -223,7 +197,7 @@ export default function Pad({ pathname, initialChangeSet, initialLastUpdate, rel
     };
 
     return (
-        <main className="grid h-svh w-svw grid-cols-1 grid-rows-[.2fr,9.6fr,.2fr] gap-2 bg-background p-2" onKeyDown={handleSaveFromKeyboard}>
+        <main className="grid h-svh w-svw grid-cols-1 grid-rows-[.2fr,9.6fr,.2fr] gap-2 bg-background p-2">
             <div onClick={() => setOpenCommand(openCommand => !openCommand)}>
                 <Header />
             </div>
@@ -234,7 +208,7 @@ export default function Pad({ pathname, initialChangeSet, initialLastUpdate, rel
             </div>
 
             <ResizablePanelGroup className={`${!loaded && 'hidden'}`} direction={windowSize.width >= 768 ? 'horizontal' : 'vertical'}>
-                <ResizablePanel className={`${layout === 'preview' && 'hidden'}`}>
+                <ResizablePanel className={`${layout === 'preview' && 'hidden'}`} defaultSize={50}>
                     <Editor
                         defaultLanguage="markdown"
                         onMount={handleMonacoMount}
@@ -254,14 +228,14 @@ export default function Pad({ pathname, initialChangeSet, initialLastUpdate, rel
 
                 <ResizableHandle className={`${layout !== 'default' && 'hidden'} bg-muted-accent`} />
 
-                <ResizablePanel className={`${(!loaded || layout === 'editor') && 'hidden'}`}>
+                <ResizablePanel className={`${(!loaded || layout === 'editor') && 'hidden'}`} defaultSize={50}>
                     <div className="markdown-body h-full overflow-y-scroll p-4">
                         <MarkdownRenderer content={content} />
                     </div>
                 </ResizablePanel>
             </ResizablePanelGroup>
 
-            <StatusBar pathname={pathname} hasModification={hasModification} lastUpdate={lastUpdate} spectators={concurrentConnections} />
+            <StatusBar pathname={pathname} hasModification={hasModification} lastUpdate={localLastUpdate} spectators={concurrentConnections} />
 
             <CommandDialog open={openCommand} onOpenChange={setOpenCommand}>
                 <CommandInput placeholder="Type a command or search..." />
@@ -301,15 +275,6 @@ export default function Pad({ pathname, initialChangeSet, initialLastUpdate, rel
                         </CommandItem>
                     </CommandGroup>
 
-                    <CommandGroup heading="Actions">
-                        <CommandItem onSelect={handleSaveFromCommand}>
-                            <div className="space-y-5">
-                                <h1 className="font-bold">💾 Save</h1>
-                                <span className="text-xs">Persists the pad content on the remote storage.</span>
-                            </div>
-                        </CommandItem>
-                    </CommandGroup>
-
                     <CommandGroup heading="Themes">
                         <CommandItem onSelect={() => handleTheme('dark')}>
                             <div className="space-y-5">
@@ -332,7 +297,7 @@ export default function Pad({ pathname, initialChangeSet, initialLastUpdate, rel
                 <CommandInput placeholder="Search for a Pad..." />
 
                 <CommandGroup heading="Pads">
-                    {relatedPads.map((related, index) => {
+                    {related.map((related, index) => {
                         const paths = related.split('/').filter(path => path);
                         const lastPath = paths.pop();
 
@@ -342,7 +307,9 @@ export default function Pad({ pathname, initialChangeSet, initialLastUpdate, rel
                                     {/* Search seems to be based on inner elements. I added this hidden span so the search works with the full path */}
                                     <span hidden>{related}</span>
 
-                                    {paths.map((path, index) => <Badge key={index}>{path}</Badge>)}
+                                    {paths.map((path, index) => (
+                                        <Badge key={index}>{path}</Badge>
+                                    ))}
 
                                     <p key={index}>{lastPath}</p>
                                 </div>

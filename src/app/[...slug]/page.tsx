@@ -2,7 +2,7 @@ import React from 'react';
 
 import dynamic from 'next/dynamic';
 
-import { getPadsWithPrefix, getInitialPageContent } from '@/app/actions';
+import { content, lastUpdated, searchRoot } from '@/app/actions/pad';
 
 const Pad = dynamic(() => import('@/app/components/pad'), { ssr: true });
 
@@ -15,11 +15,11 @@ function joinSlug(slug: string[]) {
 }
 
 export default async function Page({ params }: IPageProps) {
-    const slug = joinSlug(params.slug);
+    const [root] = params.slug;
 
-    const { buffer, lastUpdate } = await getInitialPageContent(slug);
+    const document = joinSlug(params.slug);
 
-    const relatedPads = await getPadsWithPrefix(params.slug[0]);
+    const [buffer, lastUpdate, related] = await Promise.all([content(document), lastUpdated(document), searchRoot('/' + root)]);
 
-    return <Pad pathname={slug} initialChangeSet={buffer} initialLastUpdate={lastUpdate} relatedPads={relatedPads} />;
+    return <Pad pathname={document} initialContent={buffer} initialLastUpdate={lastUpdate} related={related} />;
 }

@@ -1,3 +1,3 @@
-export const handleServerDateTime = (datetime: string | null) => {
-    return datetime ? new Date(datetime).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'medium' }) : '';
+export const handleServerDateTime = (timestamp: number | null) => {
+    return timestamp ? new Date(timestamp).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'medium' }) : '';
 };
