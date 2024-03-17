@@ -15,7 +15,7 @@ import { MonacoBinding } from 'y-monaco';
 
 import { handleServerDateTime } from '@/app/utils/datetime';
 
-import { lastUpdated } from '@/app/actions/pad';
+import { lastUpdate } from '@/app/actions/pad';
 
 import Header from '@/app/components/header';
 import MarkdownRenderer from '@/app/components/markdown-renderer';
@@ -27,7 +27,7 @@ import { CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } fr
 
 interface IPadProps {
     pathname: string;
-    initialContent: number[] | null;
+    initialContent: Array<number> | null;
     initialLastUpdate: number | null;
     related: string[];
 }
@@ -67,7 +67,7 @@ export default function Pad({ pathname, initialContent, initialLastUpdate, relat
 
     useEffect(() => {
         const interval = setInterval(async () => {
-            const serverLastUpdate = await lastUpdated(pathname);
+            const serverLastUpdate = await lastUpdate(pathname);
 
             setLocalLastUpdate(handleServerDateTime(serverLastUpdate));
         }, 3_000);

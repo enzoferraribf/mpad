@@ -1,6 +1,6 @@
 export type Pad = {
-    root: string;
-    document: string;
-    content: Array<number>;
-    _ts: number;
+    id: string | null;
+    root: string | null;
+    content: Array<number> | null;
+    lastUpdate: number | null;
 };

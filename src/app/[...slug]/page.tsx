@@ -2,7 +2,7 @@ import React from 'react';
 
 import dynamic from 'next/dynamic';
 
-import { content, lastUpdated, searchRoot } from '@/app/actions/pad';
+import { initial, searchRoot } from '@/app/actions/pad';
 
 const Pad = dynamic(() => import('@/app/components/pad'), { ssr: true });
 
@@ -19,7 +19,9 @@ export default async function Page({ params }: IPageProps) {
 
     const document = joinSlug(params.slug);
 
-    const [buffer, lastUpdate, related] = await Promise.all([content(document), lastUpdated(document), searchRoot('/' + root)]);
+    console.time('init');
+    const [initialContent, related] = await Promise.all([initial(document), searchRoot('/' + root)]);
+    console.timeEnd('init');
 
-    return <Pad pathname={document} initialContent={buffer} initialLastUpdate={lastUpdate} related={related} />;
+    return <Pad pathname={document} initialContent={initialContent.content} initialLastUpdate={initialContent.lastUpdate} related={related} />;
 }

@@ -1,87 +1,54 @@
 'use server';
 
-import { CosmosClient } from '@azure/cosmos';
+import { createClient } from '@libsql/client';
 
 import { Pad } from '@/app/models/Pad';
 
-const client = new CosmosClient(process.env.COSMOS_DB_CONNECTION_STRING!);
+const turso = createClient({ url: process.env.TURSO_DB!, authToken: process.env.TURSO_TOKEN! });
 
-const database = client.database('mpad');
+type EssentialContainer = Pick<Pad, 'content' | 'lastUpdate'>;
 
-const container = database.container('pads');
+export async function initial(document: string): Promise<EssentialContainer> {
+    const { rows } = await turso.execute({ sql: 'SELECT content, last_update FROM pads WHERE id = ? LIMIT 1', args: [document] });
 
-export async function content(document: string): Promise<Array<number> | null> {
-    const sql = 'SELECT c.content FROM c WHERE c.document = @document';
+    if (!rows || rows.length === 0) return { content: null, lastUpdate: null };
 
-    const query = {
-        query: sql,
-        parameters: [
-            {
-                name: '@document',
-                value: document,
-            },
-        ],
-    };
+    const [pad] = rows;
 
-    type ContentContainer = Pick<Pad, 'content'>;
+    const content = pad['content'] as string;
+    const lastUpdate = pad['last_update'] as number;
 
-    const feed = await container.items.query<ContentContainer>(query).fetchAll();
-
-    if (!feed.resources || feed.resources.length === 0) {
-        return null;
-    }
-
-    const [{ content }] = feed.resources;
-
-    return content;
+    return { content: stringToBuffer(content), lastUpdate: lastUpdate };
 }
 
-export async function lastUpdated(document: string): Promise<number | null> {
-    const sql = 'SELECT c._ts FROM c WHERE c.document = @document';
+export async function lastUpdate(document: string): Promise<number | null> {
+    const { rows } = await turso.execute({ sql: 'SELECT last_update FROM pads WHERE id = ? LIMIT 1', args: [document] });
 
-    const query = {
-        query: sql,
-        parameters: [
-            {
-                name: '@document',
-                value: document,
-            },
-        ],
-    };
+    if (!rows || rows.length === 0) return null;
 
-    type LastUpdatedContainer = Pick<Pad, '_ts'>;
+    const [pad] = rows;
 
-    const feed = await container.items.query<LastUpdatedContainer>(query).fetchAll();
+    const lastUpdate = pad['last_update'] as number;
 
-    if (!feed.resources || feed.resources.length === 0) {
-        return null;
-    }
-
-    const [{ _ts }] = feed.resources;
-
-    return _ts * 1_000;
+    return lastUpdate;
 }
 
 export async function searchRoot(root: string): Promise<string[]> {
-    const sql = 'SELECT c.document FROM c WHERE c.root = @root';
+    const { rows } = await turso.execute({ sql: 'SELECT id FROM pads WHERE root = ?', args: [root] });
 
-    const query = {
-        query: sql,
-        parameters: [
-            {
-                name: '@root',
-                value: root,
-            },
-        ],
-    };
+    if (!rows || rows.length === 0) return [];
 
-    type DocumentContainer = Pick<Pad, 'document'>;
+    return rows.map(row => row['id'] as string);
+}
 
-    const feed = await container.items.query<DocumentContainer>(query).fetchAll();
+const stringToBuffer = (change: string) => {
+    const array: number[] = [];
 
-    if (!feed.resources || feed.resources.length === 0) {
-        return [];
+    for (const char of change.split(',')) {
+        array.push(Number.parseInt(char));
     }
 
-    return feed.resources.map(container => container.document);
-}
+    const buffer = new Uint8Array(array);
+
+    return Array.from(buffer);
+};
