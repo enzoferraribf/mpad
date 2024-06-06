@@ -3,6 +3,7 @@
 import { createClient } from '@libsql/client';
 
 import { Pad } from '@/app/models/pad';
+import { cookies } from 'next/headers';
 
 const turso = createClient({ url: process.env.TURSO_DB!, authToken: process.env.TURSO_TOKEN! });
 
@@ -22,6 +23,8 @@ export async function initial(document: string): Promise<EssentialContainer> {
 }
 
 export async function lastUpdate(document: string): Promise<number | null> {
+    const _ = cookies();
+
     const { rows } = await turso.execute({ sql: 'SELECT last_update FROM pads WHERE id = ? LIMIT 1', args: [document] });
 
     if (!rows || rows.length === 0) return null;
