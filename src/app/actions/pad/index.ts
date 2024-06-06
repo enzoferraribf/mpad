@@ -2,7 +2,7 @@
 
 import { createClient } from '@libsql/client';
 
-import { Pad } from '@/app/models/Pad';
+import { Pad } from '@/app/models/pad';
 
 const turso = createClient({ url: process.env.TURSO_DB!, authToken: process.env.TURSO_TOKEN! });
 
