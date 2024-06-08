@@ -23,7 +23,7 @@ import { IApplicationGrid } from '@/app/models/application-grid';
 export default function ApplicationGrid({ pathname, content: serverContent, updated: serverUpdated, related }: IApplicationGrid) {
     const { context, setContext } = useContext(ApplicationContext);
 
-    useEffect(() => onInterval(3_000, async () => setContext({ updated: handleServerDateTime(await lastUpdate(pathname)) })), [pathname]);
+    useEffect(() => onInterval(3_000, async () => setContext({ updated: handleServerDateTime(await lastUpdate(pathname)), modified: false })), [pathname]);
 
     useEffect(() => setContext({ updated: handleServerDateTime(serverUpdated) }), []);
 
