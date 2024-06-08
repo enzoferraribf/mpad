@@ -7,8 +7,8 @@ import { JetBrains_Mono } from 'next/font/google';
 
 import './globals.css';
 
-import { ThemeProvider } from '@/app/components/theme-provider';
-import { Toaster } from '@/app/components/sonner';
+import { ThemeProvider } from '@/app/components/shadcn/theme-provider';
+import { Toaster } from '@/app/components/shadcn/sonner';
 
 const font = JetBrains_Mono({ subsets: ['latin'] });
 

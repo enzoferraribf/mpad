@@ -10,11 +10,12 @@ import { handleServerDateTime } from '@/app/utils/datetime';
 
 import { onCtrlKeyPressed, onInterval, onWindowResize } from '@/app/utils/events';
 
-import Header from '@/app/components/header';
-import MarkdownRenderer from '@/app/components/markdown-renderer';
-import StatusBar from '@/app/components/status-bar';
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/app/components/shadcn/resizable';
+
+import { Header } from '@/app/components/header';
+import { MarkdownRenderer } from '@/app/components/markdown-renderer';
+import { StatusBar } from '@/app/components/status-bar';
 import { CommandBar } from '@/app/components/command-bar';
-import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/app/components/resizable';
 import { Explorer } from '@/app/components/explorer';
 import { MarkdownEditor } from '@/app/components/markdown-editor';
 

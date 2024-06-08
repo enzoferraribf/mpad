@@ -4,7 +4,7 @@ import { useTheme } from 'next-themes';
 
 import { ApplicationContext } from '@/app/context/context';
 
-import { CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/app/components/command';
+import { CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/app/components/shadcn/command';
 
 export function CommandBar() {
     const { setTheme } = useTheme();

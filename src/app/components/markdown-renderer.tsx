@@ -13,11 +13,9 @@ import { darcula, oneLight } from 'react-syntax-highlighter/dist/esm/styles/pris
 
 import 'github-markdown-css';
 
-interface MarkdownRendererProps {
-    content: string;
-}
+import { IMarkdownRenderer } from '@/app/models/markdown-renderer';
 
-export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
+export function MarkdownRenderer({ content }: IMarkdownRenderer) {
     const { theme } = useTheme();
 
     return (
