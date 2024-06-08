@@ -33,6 +33,8 @@ export default function ApplicationGrid({ pathname, content: serverContent, upda
 
     useEffect(() => onWindowResize(() => setContext({ window: { width: window.innerWidth, height: window.innerHeight } })), []);
 
+    useEffect(() => setContext({ window: { width: window.innerWidth, height: window.innerHeight } }), []);
+
     return (
         <main className="grid h-svh w-svw grid-cols-1 grid-rows-[.2fr,9.6fr,.2fr] gap-2 bg-background p-2">
             <div onClick={() => setContext({ command: !context.command })}>
