@@ -20,7 +20,7 @@ export function Explorer({ related }: { related: string[] }) {
             <CommandInput placeholder="Search for a Pad..." />
 
             <CommandGroup heading="Pads">
-                <div className="max-h-[36rem] max-w-fit overflow-y-scroll">
+                <div className="max-h-[36rem] overflow-y-scroll">
                     {related.map((related, index) => {
                         const paths = related.split('/').filter(path => path);
                         const lastPath = paths.pop();

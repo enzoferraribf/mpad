@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 import { ChangeEvent, FormEvent, useState } from 'react';
@@ -28,27 +29,27 @@ export default function Home() {
     return (
         <div className="min-w-577 min-h-365 flex h-svh w-svw flex-col items-center justify-center overflow-auto bg-background">
             <div className="mt-[-60px] flex flex-col items-center justify-center">
-                <h1 className="background-animate bg-gradient-to-r  from-purple-600 via-sky-600 to-blue-600 text-9xl">
-                    Mpad
-                </h1>
+                <h1 className="background-animate bg-gradient-to-r  from-purple-600 via-sky-600 to-blue-600 text-9xl">Mpad</h1>
                 <p>Collaborative documents in realtime</p>
             </div>
 
             <div className="flex flex-row items-baseline justify-center">
                 <div className="mt-20 p-1 text-center">
-                    <form onSubmit={handleNavigation}>
+                    <form className="mb-10" onSubmit={handleNavigation}>
                         <label className="max-w-fit text-end">missopad.com/</label>
 
-                        <input
-                            className="ml-2 mr-2 h-[2.25rem] w-48 max-w-48 border-none bg-accent p-2 outline-none"
-                            placeholder="..."
-                            onChange={handlePadChange}
-                        />
+                        <input className="ml-2 mr-2 h-[2.25rem] w-48 max-w-48 border-none bg-accent p-2 outline-none" placeholder="..." onChange={handlePadChange} />
 
                         <button className="hover:opacity-70" type="submit">
                             🚀
                         </button>
                     </form>
+
+                    <span className="text-sm">
+                        <Link className="background-animate bg-gradient-to-r  from-purple-600 via-sky-600 to-blue-600 text-sm text-white" href="/missopad/v2">
+                            See what&apos;s new in the V2!
+                        </Link>
+                    </span>
                 </div>
             </div>
         </div>

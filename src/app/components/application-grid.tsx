@@ -27,9 +27,9 @@ export default function ApplicationGrid({ pathname, content: serverContent, upda
 
     useEffect(() => setContext({ updated: handleServerDateTime(serverUpdated) }), []);
 
-    useEffect(() => onCtrlKeyPressed('j', () => setContext({ command: !context.command })), []);
+    useEffect(() => onCtrlKeyPressed(',', () => setContext({ command: !context.command })), []);
 
-    useEffect(() => onCtrlKeyPressed('b', () => setContext({ explorer: !context.explorer })), []);
+    useEffect(() => onCtrlKeyPressed('.', () => setContext({ explorer: !context.explorer })), []);
 
     useEffect(() => onWindowResize(() => setContext({ window: { width: window.innerWidth, height: window.innerHeight } })), []);
 
