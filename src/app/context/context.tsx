@@ -17,6 +17,7 @@ interface State {
     modified: boolean;
     updated: string;
     window: Window;
+    transaction: number;
 }
 
 const DEFAULT_STATE: State = {
@@ -29,6 +30,7 @@ const DEFAULT_STATE: State = {
     modified: false,
     updated: '',
     window: { width: 0, height: 0 },
+    transaction: 0,
 };
 
 export const ApplicationContext = createContext({ context: DEFAULT_STATE, setContext: (_: Partial<State>) => {} });
@@ -43,6 +45,7 @@ export default function ApplicationContextProvider({ children }: { children: Rea
     const [modified, setModified] = useState<State['modified']>(DEFAULT_STATE.modified);
     const [updated, setUpdated] = useState<State['updated']>(DEFAULT_STATE.updated);
     const [window, setWindow] = useState<State['window']>(DEFAULT_STATE.window);
+    const [transaction, setTransaction] = useState<State['transaction']>(DEFAULT_STATE.transaction);
 
     const state = {
         connections,
@@ -54,6 +57,7 @@ export default function ApplicationContextProvider({ children }: { children: Rea
         modified,
         updated,
         window,
+        transaction,
     };
 
     const setContext = (context: Partial<State>) => {
@@ -66,6 +70,7 @@ export default function ApplicationContextProvider({ children }: { children: Rea
         context.modified !== undefined && setModified(context.modified);
         context.updated !== undefined && setUpdated(context.updated);
         context.window !== undefined && setWindow(context.window);
+        context.transaction !== undefined && setTransaction(context.transaction);
     };
 
     return <ApplicationContext.Provider value={{ context: state, setContext }}>{children}</ApplicationContext.Provider>;

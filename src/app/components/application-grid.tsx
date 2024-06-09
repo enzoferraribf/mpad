@@ -2,13 +2,11 @@
 
 import React, { useContext, useEffect } from 'react';
 
-import { lastUpdate } from '@/app/actions/pad';
-
 import { ApplicationContext } from '@/app/context/context';
 
 import { handleServerDateTime } from '@/app/utils/datetime';
 
-import { onCtrlKeyPressed, onInterval, onWindowResize } from '@/app/utils/events';
+import { onCtrlKeyPressed, onWindowResize } from '@/app/utils/events';
 
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/app/components/shadcn/resizable';
 
@@ -21,10 +19,8 @@ import { MarkdownEditor } from '@/app/components/markdown-editor';
 
 import { IApplicationGrid } from '@/app/models/application-grid';
 
-export default function ApplicationGrid({ pathname, content: serverContent, updated: serverUpdated, related }: IApplicationGrid) {
+export default function ApplicationGrid({ pathname, root, content: serverContent, updated: serverUpdated, related }: IApplicationGrid) {
     const { context, setContext } = useContext(ApplicationContext);
-
-    useEffect(() => onInterval(3_000, async () => setContext({ updated: handleServerDateTime(await lastUpdate(pathname)), modified: false })), [pathname]);
 
     useEffect(() => setContext({ updated: handleServerDateTime(serverUpdated) }), []);
 
@@ -49,7 +45,7 @@ export default function ApplicationGrid({ pathname, content: serverContent, upda
 
             <ResizablePanelGroup className={`${!context.loaded && 'hidden'}`} direction={context.window.width >= 768 ? 'horizontal' : 'vertical'}>
                 <ResizablePanel className={`${context.layout === 'preview' && 'hidden'}`} defaultSize={50}>
-                    <MarkdownEditor pathname={pathname} serverContent={serverContent} />
+                    <MarkdownEditor pathname={pathname} root={root} serverContent={serverContent} />
                 </ResizablePanel>
 
                 <ResizableHandle className={`${context.layout !== 'default' && 'hidden'} bg-muted-accent`} />
