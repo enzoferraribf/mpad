@@ -16,7 +16,7 @@ import { handleServerDateTime } from '@/app/utils/datetime';
 
 import { write } from '@/app/actions/pad';
 
-export function MarkdownEditor({ pathname, root, serverContent }: { pathname: string; root: string; serverContent: Array<number> | null }) {
+export function MarkdownEditor({ pathname, root, serverContent, ice }: { pathname: string; root: string; serverContent: Array<number> | null; ice: any }) {
     const monacoRef = useRef<editor.IStandaloneCodeEditor>();
     const bindingRef = useRef<MonacoBinding>();
     const documentRef = useRef<Doc>();
@@ -69,7 +69,13 @@ export function MarkdownEditor({ pathname, root, serverContent }: { pathname: st
 
             const signaling = process.env.NEXT_PUBLIC_SIGNALING_SERVER!;
 
-            const provider = new WebrtcProvider(pathname, ydocument, { signaling: [signaling] });
+            let peerOptions = undefined;
+
+            if (ice) {
+                peerOptions = { iceServers: ice };
+            }
+
+            const provider = new WebrtcProvider(pathname, ydocument, { signaling: [signaling], peerOpts: peerOptions });
 
             provider.awareness.on('change', () => setContext({ connections: provider.awareness.states.size || 1 }));
 

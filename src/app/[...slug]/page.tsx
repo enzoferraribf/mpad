@@ -3,6 +3,7 @@ import React from 'react';
 import dynamic from 'next/dynamic';
 
 import { initial, expandRoot } from '@/app/actions/pad';
+import { getICEServers } from '@/app/actions/web-rtc';
 
 import ApplicationContextProvider from '@/app/context/context';
 
@@ -15,11 +16,11 @@ export default async function MainApplication({ params }: IMainApplication) {
 
     const document = '/' + params.slug.join('/');
 
-    const [initialContent, related] = await Promise.all([initial(document), expandRoot('/' + root)]);
+    const [initialContent, related, ice] = await Promise.all([initial(document), expandRoot('/' + root), getICEServers()]);
 
     return (
         <ApplicationContextProvider>
-            <ApplicationGrid pathname={document} root={root} content={initialContent.content} updated={initialContent.lastUpdate} related={related} />
+            <ApplicationGrid pathname={document} root={root} content={initialContent.content} updated={initialContent.lastUpdate} related={related} ice={ice} />
         </ApplicationContextProvider>
     );
 }

@@ -1,10 +1,10 @@
 'use server';
 
+import { mergeUpdatesV2 } from 'yjs';
 import { createClient } from '@libsql/client';
 import { cookies } from 'next/headers';
 
 import { Pad } from '@/app/models/pad';
-import { mergeUpdatesV2 } from 'yjs';
 
 const turso = createClient({ url: process.env.TURSO_DB!, authToken: process.env.TURSO_TOKEN! });
 

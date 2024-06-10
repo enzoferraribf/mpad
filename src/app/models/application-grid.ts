@@ -4,4 +4,5 @@ export type IApplicationGrid = {
     content: Array<number> | null;
     updated: number | null;
     related: string[];
+    ice: any;
 };

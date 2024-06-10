@@ -19,7 +19,7 @@ import { MarkdownEditor } from '@/app/components/markdown-editor';
 
 import { IApplicationGrid } from '@/app/models/application-grid';
 
-export default function ApplicationGrid({ pathname, root, content: serverContent, updated: serverUpdated, related }: IApplicationGrid) {
+export default function ApplicationGrid({ pathname, root, content: serverContent, updated: serverUpdated, related, ice }: IApplicationGrid) {
     const { context, setContext } = useContext(ApplicationContext);
 
     useEffect(() => setContext({ updated: handleServerDateTime(serverUpdated) }), []);
@@ -45,7 +45,7 @@ export default function ApplicationGrid({ pathname, root, content: serverContent
 
             <ResizablePanelGroup className={`${!context.loaded && 'hidden'}`} direction={context.window.width >= 768 ? 'horizontal' : 'vertical'}>
                 <ResizablePanel className={`${context.layout === 'preview' && 'hidden'}`} defaultSize={50}>
-                    <MarkdownEditor pathname={pathname} root={root} serverContent={serverContent} />
+                    <MarkdownEditor pathname={pathname} root={root} serverContent={serverContent} ice={ice} />
                 </ResizablePanel>
 
                 <ResizableHandle className={`${context.layout !== 'default' && 'hidden'} bg-muted-accent`} />
