@@ -58,7 +58,7 @@ export async function write(root: string, document: string, data: string, transa
 
     const statement = `
         INSERT INTO pads (id, content, root, last_update, last_transaction) VALUES ($id, $content, $root, $update, $transaction)
-        ON CONFLICT DO UPDATE SET content = $content, last_update = $update, last_transaction = $transaction
+        ON CONFLICT DO UPDATE SET content = $content, root = $root, last_update = $update, last_transaction = $transaction
         WHERE NOT EXISTS (
             SELECT 1 FROM pads WHERE id = $id AND (last_update > $serverLastUpdate OR last_transaction > $transaction)
         )
