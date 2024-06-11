@@ -78,6 +78,8 @@ export async function write(root: string, document: string, data: string, transa
 }
 
 export async function expandRoot(root: string): Promise<string[]> {
+    const _ = cookies();
+    
     const { rows } = await turso.execute({ sql: 'SELECT id FROM pads WHERE root = ?', args: [root] });
 
     if (!rows || rows.length === 0) return [];
