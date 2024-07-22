@@ -9,14 +9,14 @@ import RemarkBreaks from 'remark-breaks';
 import ReactMarkdown from 'react-markdown';
 
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { darcula, oneLight } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { synthwave84, oneLight } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 import 'github-markdown-css';
 
 import { IMarkdownRenderer } from '@/app/models/markdown-renderer';
 
 export function MarkdownRenderer({ content }: IMarkdownRenderer) {
-    const { theme } = useTheme();
+    const { resolvedTheme } = useTheme();
 
     return (
         <ReactMarkdown
@@ -32,7 +32,7 @@ export function MarkdownRenderer({ content }: IMarkdownRenderer) {
                                 PreTag="div"
                                 children={String(children).replace(/\n$/, '')}
                                 language={match[1]}
-                                style={theme === 'dark' ? darcula : oneLight}
+                                style={resolvedTheme === 'dark' ? synthwave84 : oneLight}
                             />
                         );
                     }
