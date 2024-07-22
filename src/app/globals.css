@@ -71,6 +71,7 @@
 }
 
 @media (prefers-color-scheme: light) {
+
     .markdown-body,
     [data-theme='light'] {
         --color-fg-default: var(--foreground) !important;
@@ -79,6 +80,7 @@
 }
 
 @media (prefers-color-scheme: dark) {
+
     .markdown-body,
     [data-theme='dark'] {
         --color-fg-default: var(--foreground) !important;
@@ -87,22 +89,21 @@
 }
 
 .yRemoteSelection {
-    background-color: rgb(250, 129, 0, 0.5);
+    background-color: rgba(92, 0, 89, 0.5);
 }
 
 .yRemoteSelectionHead {
     position: absolute;
-    border-left: orange solid 2px;
-    border-top: orange solid 2px;
-    border-bottom: orange solid 2px;
+    border-left: rgb(225, 0, 210) solid 2px;
+    border-top: rgb(225, 0, 210) solid 2px;
+    border-bottom: rgb(225, 0, 210) solid 2px;
     height: 100%;
     box-sizing: border-box;
 }
 
 .yRemoteSelectionHead::after {
     position: absolute;
-    content: ' ';
-    border: 3px solid orange;
+    border: 3px solid rgb(225, 0, 210);
     border-radius: 4px;
     left: -4px;
     top: -5px;
@@ -126,10 +127,12 @@
 }
 
 @keyframes AnimationName {
+
     0%,
     100% {
         background-position: 0% 50%;
     }
+
     50% {
         background-position: 100% 50%;
     }
@@ -139,6 +142,7 @@
     * {
         @apply border-border;
     }
+
     body {
         @apply bg-background text-foreground;
 
