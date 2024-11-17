@@ -44,12 +44,6 @@ export default function Home() {
                             🚀
                         </button>
                     </form>
-
-                    <span className="text-sm">
-                        <Link className="background-animate bg-gradient-to-r  from-purple-600 via-sky-600 to-blue-600 text-sm text-white" href="/missopad/v2">
-                            See what&apos;s new in the V2!
-                        </Link>
-                    </span>
                 </div>
             </div>
         </div>
