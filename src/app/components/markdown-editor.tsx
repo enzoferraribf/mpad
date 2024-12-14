@@ -17,9 +17,9 @@ import { handleServerDateTime } from '@/app/utils/datetime';
 import { write } from '@/app/actions/pad';
 
 export function MarkdownEditor({ pathname, root, serverContent, ice }: { pathname: string; root: string; serverContent: Array<number> | null; ice: any }) {
-    const monacoRef = useRef<editor.IStandaloneCodeEditor>();
-    const bindingRef = useRef<MonacoBinding>();
-    const documentRef = useRef<Doc>();
+    const monacoRef = useRef<editor.IStandaloneCodeEditor>(null);
+    const bindingRef = useRef<MonacoBinding>(null);
+    const documentRef = useRef<Doc>(null);
 
     const { resolvedTheme } = useTheme();
 
