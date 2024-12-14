@@ -1,3 +1,3 @@
 export type IMainApplication = {
-    params: { slug: string[] };
+    params: Promise<{ slug: string[] }>;
 };

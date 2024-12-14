@@ -12,9 +12,11 @@ import { IMainApplication } from '@/app/models/main-application';
 const ApplicationGrid = dynamic(() => import('@/app/components/application-grid'), { ssr: true });
 
 export default async function MainApplication({ params }: IMainApplication) {
-    const [root] = params.slug;
+    const resolved = await params;
 
-    const document = '/' + params.slug.join('/');
+    const [root] = resolved.slug;
+
+    const document = '/' + resolved.slug.join('/');
 
     const [initialContent, related, ice] = await Promise.all([initial(document), expandRoot('/' + root), getICEServers()]);
 
