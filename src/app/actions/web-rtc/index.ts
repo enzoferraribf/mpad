@@ -10,7 +10,9 @@ export async function getICEServers() {
             signal: AbortSignal.timeout(2_000),
         });
 
-        configuration = await response.json();
+        if (response.ok) {
+            configuration = await response.json();
+        }
     } catch {
         console.log('failed fetching stun servers');
     }
