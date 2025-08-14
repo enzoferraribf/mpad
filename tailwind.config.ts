@@ -16,6 +16,9 @@ const config = {
             mobile: { max: '640px' },
         },
         extend: {
+            backgroundImage: {
+                'brand-gradient': 'linear-gradient(to right, theme(colors.purple.600), theme(colors.sky.600), theme(colors.blue.600))',
+            },
             colors: {
                 border: 'hsl(var(--border))',
                 input: 'hsl(var(--input))',

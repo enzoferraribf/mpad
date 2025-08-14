@@ -33,14 +33,14 @@ export default function ApplicationGrid({ pathname, root, content: serverContent
     useEffect(() => setContext({ window: { width: window.innerWidth, height: window.innerHeight } }), []);
 
     return (
-        <main className="grid h-svh w-svw grid-cols-1 grid-rows-[.2fr,9.6fr,.2fr] gap-2 bg-background p-2">
+        <main className="main-grid">
             <div onClick={() => setContext({ command: !context.command })}>
                 <Header />
             </div>
 
             {/* Since we can't dynamically create the editor, we need this hidden hack to make sure that we have a proper loading screen */}
-            <div className={`${context.loaded && 'hidden'} flex items-center justify-center`}>
-                <h1 className="background-animate bg-gradient-to-r  from-purple-600 via-sky-600 to-blue-600 text-9xl">Mpad</h1>
+            <div className={`${context.loaded && 'hidden'} center-content`}>
+                <h1 className="brand-title">Mpad</h1>
             </div>
 
             <ResizablePanelGroup className={`${!context.loaded && 'hidden'}`} direction={context.window.width >= 768 ? 'horizontal' : 'vertical'}>
@@ -48,10 +48,10 @@ export default function ApplicationGrid({ pathname, root, content: serverContent
                     <MarkdownEditor pathname={pathname} root={root} serverContent={serverContent} ice={ice} />
                 </ResizablePanel>
 
-                <ResizableHandle className={`${context.layout !== 'default' && 'hidden'} bg-muted-accent`} />
+                <ResizableHandle className={`${context.layout !== 'default' && 'hidden'} bg-border`} />
 
                 <ResizablePanel className={`${(!context.loaded || context.layout === 'editor') && 'hidden'}`} defaultSize={50}>
-                    <div className="markdown-body h-full overflow-y-scroll p-4">
+                    <div className="markdown-body h-full overflow-y-scroll container-padding">
                         <MarkdownRenderer content={context.content} />
                     </div>
                 </ResizablePanel>

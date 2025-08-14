@@ -33,48 +33,48 @@ export function CommandBar() {
 
                 <CommandGroup heading="Files">
                     <CommandItem onSelect={() => handleFiles()}>
-                        <div className="space-y-5">
-                            <h1 className="font-bold">📁 Explorer</h1>
-                            <span className="text-xs">{"View this pad's file structure."}</span>
+                        <div className="command-item-spacing">
+                            <h3 className="command-heading">📁 Explorer</h3>
+                            <span className="command-description">{"View this pad's file structure."}</span>
                         </div>
                     </CommandItem>
                 </CommandGroup>
 
                 <CommandGroup heading="Layout">
                     <CommandItem onSelect={() => handleLayout('editor')}>
-                        <div className="space-y-5">
-                            <h1 className="font-bold">✏️ Editor</h1>
-                            <span className="text-xs">Changes the Mpad view to edit-only.</span>
+                        <div className="command-item-spacing">
+                            <h3 className="command-heading">✏️ Editor</h3>
+                            <span className="command-description">Changes the Mpad view to edit-only.</span>
                         </div>
                     </CommandItem>
 
                     <CommandItem onSelect={() => handleLayout('preview')}>
-                        <div className="space-y-5">
-                            <h1 className="font-bold">📄 Preview</h1>
-                            <span className="text-xs">Changes the Mpad view to preview-only.</span>
+                        <div className="command-item-spacing">
+                            <h3 className="command-heading">📄 Preview</h3>
+                            <span className="command-description">Changes the Mpad view to preview-only.</span>
                         </div>
                     </CommandItem>
 
                     <CommandItem onSelect={() => handleLayout('default')}>
-                        <div className="space-y-5">
-                            <h1 className="font-bold">✏️📄 Editor+Preview</h1>
-                            <span className="text-xs">Changes the Mpad view to default.</span>
+                        <div className="command-item-spacing">
+                            <h3 className="command-heading">✏️📄 Editor+Preview</h3>
+                            <span className="command-description">Changes the Mpad view to default.</span>
                         </div>
                     </CommandItem>
                 </CommandGroup>
 
                 <CommandGroup heading="Themes">
                     <CommandItem onSelect={() => handleTheme('dark')}>
-                        <div className="space-y-5">
-                            <h1 className="font-bold">🌙 Dark</h1>
-                            <span className="text-xs">Changes Mpad to dark mode.</span>
+                        <div className="command-item-spacing">
+                            <h3 className="command-heading">🌙 Dark</h3>
+                            <span className="command-description">Changes Mpad to dark mode.</span>
                         </div>
                     </CommandItem>
 
                     <CommandItem onSelect={() => handleTheme('light')}>
-                        <div className="space-y-5">
-                            <h1 className="font-bold">☀️ Light</h1>
-                            <span className="text-xs">Changes Mpad to light mode.</span>
+                        <div className="command-item-spacing">
+                            <h3 className="command-heading">☀️ Light</h3>
+                            <span className="command-description">Changes Mpad to light mode.</span>
                         </div>
                     </CommandItem>
                 </CommandGroup>

@@ -1,102 +1,145 @@
 'use server';
 
 import { mergeUpdatesV2 } from 'yjs';
-import { createClient } from '@libsql/client';
 import { cookies } from 'next/headers';
+import { eq } from 'drizzle-orm';
 
-import { Pad } from '@/app/models/pad';
+import { PadSnapshot } from '@/app/models/pad';
+import { createDatabase } from '@/app/lib/db';
+import { pads } from '@/app/lib/schema';
 
-const turso = createClient({ url: process.env.TURSO_DB!, authToken: process.env.TURSO_TOKEN! });
+function bufferize(data: string): number[] {
+    if (!data) {
+        return [];
+    }
 
-type EssentialContainer = Pick<Pad, 'content' | 'lastUpdate'>;
+    return data
+        .split(',')
+        .map(char => parseInt(char, 10))
+        .filter(num => !isNaN(num));
+}
 
-export async function initial(document: string): Promise<EssentialContainer> {
-    const { rows } = await turso.execute({ sql: 'SELECT content, last_update FROM pads WHERE id = ? LIMIT 1', args: [document] });
+export async function initial(document: string): Promise<PadSnapshot> {
+    const preventCaching = cookies();
 
-    if (!rows || rows.length === 0) return { content: null, lastUpdate: null };
+    const database = createDatabase();
 
-    const [pad] = rows;
+    const [pad] = await database
+        .select({
+            content: pads.content,
+            lastUpdate: pads.lastUpdate,
+        })
+        .from(pads)
+        .where(eq(pads.id, document))
+        .limit(1);
 
-    const content = pad['content'] as string;
-    const lastUpdate = pad['last_update'] as number;
+    if (!pad) {
+        return { content: null, lastUpdate: null };
+    }
 
-    return { content: stringToBuffer(content), lastUpdate: lastUpdate };
+    let buffer = null;
+    if (pad.content) {
+        buffer = bufferize(pad.content);
+    }
+
+    return {
+        content: buffer,
+        lastUpdate: pad.lastUpdate,
+    };
 }
 
 export async function lastUpdate(document: string): Promise<number | null> {
-    const _ = cookies();
+    const preventCaching = cookies();
 
-    const { rows } = await turso.execute({ sql: 'SELECT last_update FROM pads WHERE id = ? LIMIT 1', args: [document] });
+    const database = createDatabase();
 
-    if (!rows || rows.length === 0) return null;
+    const [pad] = await database
+        .select({
+            lastUpdate: pads.lastUpdate,
+        })
+        .from(pads)
+        .where(eq(pads.id, document))
+        .limit(1);
 
-    const [pad] = rows;
+    if (!pad) {
+        return null;
+    }
 
-    const lastUpdate = pad['last_update'] as number;
-
-    return lastUpdate;
+    return pad.lastUpdate;
 }
 
 export async function write(root: string, document: string, data: string, transaction: number) {
-    const { content: serverContent, lastUpdate: serverLastUpdate } = await initial(document);
+    const serverSnapshot = await initial(document);
 
-    let toStore = data;
+    const mergedContent = prepareMergedContent(data, serverSnapshot.content);
 
-    if (serverContent && serverContent.length > 0) {
-        const buffer1 = new Uint8Array(Array.from(serverContent));
+    const updateTimestamp = Date.now();
+    const normalizedRoot = '/' + root;
 
-        const buffer2 = new Uint8Array(Array.from(stringToBuffer(data)));
+    const database = createDatabase();
 
-        const merged = mergeUpdatesV2([buffer1, buffer2]);
+    const conflictCondition = buildConflictCondition(serverSnapshot.lastUpdate);
 
-        toStore = merged.join(',');
+    const result = await database
+        .insert(pads)
+        .values({
+            id: document,
+            content: mergedContent,
+            root: normalizedRoot,
+            lastUpdate: updateTimestamp,
+            lastTransaction: transaction,
+        })
+        .onConflictDoUpdate({
+            target: pads.id,
+            set: {
+                content: mergedContent,
+                root: normalizedRoot,
+                lastUpdate: updateTimestamp,
+                lastTransaction: transaction,
+            },
+            where: conflictCondition,
+        });
+
+    const updateSucceeded = result.rowsAffected > 0;
+
+    if (updateSucceeded) {
+        return updateTimestamp;
     }
 
-    const update = Date.now();
-
-    root = '/' + root;
-
-    const statement = `
-        INSERT INTO pads (id, content, root, last_update, last_transaction) VALUES ($id, $content, $root, $update, $transaction)
-        ON CONFLICT DO UPDATE SET content = $content, root = $root, last_update = $update, last_transaction = $transaction
-        WHERE NOT EXISTS (
-            SELECT 1 FROM pads WHERE id = $id AND (last_update > $serverLastUpdate OR last_transaction > $transaction)
-        )
-    `;
-
-    const { rowsAffected } = await turso.execute({
-        sql: statement,
-        args: {
-            id: document,
-            content: toStore,
-            root,
-            update,
-            serverLastUpdate,
-            transaction,
-        },
-    });
-
-    return rowsAffected > 0 ? update : null;
+    return null;
 }
 
 export async function expandRoot(root: string): Promise<string[]> {
-    const _ = cookies();
-    
-    const { rows } = await turso.execute({ sql: 'SELECT id FROM pads WHERE root = ?', args: [root] });
+    const preventCaching = cookies();
 
-    if (!rows || rows.length === 0) return [];
+    const database = createDatabase();
 
-    return rows.map(row => row['id'] as string);
+    const result = await database
+        .select({
+            id: pads.id,
+        })
+        .from(pads)
+        .where(eq(pads.root, root));
+
+    return result.map(({ id }) => id);
 }
 
-const stringToBuffer = (change: string) => {
-    const array: number[] = [];
-
-    for (const char of change.split(',')) {
-        array.push(Number.parseInt(char));
+function prepareMergedContent(clientData: string, serverContent: number[] | null): string {
+    if (!serverContent || serverContent.length === 0) {
+        return clientData;
     }
 
-    const buffer = new Uint8Array(array);
+    const serverBuffer = new Uint8Array(Array.from(serverContent));
+    const clientBuffer = new Uint8Array(Array.from(bufferize(clientData)));
+    const mergedBuffer = mergeUpdatesV2([serverBuffer, clientBuffer]);
 
-    return Array.from(buffer);
-};
+    return mergedBuffer.join(',');
+}
+
+function buildConflictCondition(serverLastUpdate: number | null) {
+    if (serverLastUpdate === null) {
+        return undefined;
+    }
+
+    return eq(pads.lastUpdate, serverLastUpdate);
+}

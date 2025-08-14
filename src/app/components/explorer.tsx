@@ -27,7 +27,7 @@ export function Explorer({ related }: { related: string[] }) {
 
                         return (
                             <CommandItem key={index} onSelect={() => handleNavigation(related)}>
-                                <div key={index} className="flex flex-row space-x-2 text-nowrap text-sm">
+                                <div key={index} className="flex file-path-spacing text-nowrap status-text">
                                     {/* Search seems to be based on inner elements. I added this hidden span so the search works with the full path */}
                                     <span hidden>{related}</span>
 
