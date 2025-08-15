@@ -15,6 +15,7 @@ import { MarkdownRenderer } from '@/app/components/markdown-renderer';
 import { StatusBar } from '@/app/components/status-bar';
 import { CommandBar } from '@/app/components/command-bar';
 import { Explorer } from '@/app/components/explorer';
+import { Storage } from '@/app/components/storage';
 import { MarkdownEditor } from '@/app/components/markdown-editor';
 
 import { IApplicationGrid } from '@/app/models/application-grid';
@@ -51,7 +52,7 @@ export default function ApplicationGrid({ pathname, root, content: serverContent
                 <ResizableHandle className={`${context.layout !== 'default' && 'hidden'} bg-border`} />
 
                 <ResizablePanel className={`${(!context.loaded || context.layout === 'editor') && 'hidden'}`} defaultSize={50}>
-                    <div className="markdown-body h-full overflow-y-scroll container-padding">
+                    <div className="markdown-body container-padding h-full overflow-y-scroll">
                         <MarkdownRenderer content={context.content} />
                     </div>
                 </ResizablePanel>
@@ -62,6 +63,8 @@ export default function ApplicationGrid({ pathname, root, content: serverContent
             <CommandBar />
 
             <Explorer related={related} />
+
+            <Storage />
         </main>
     );
 }

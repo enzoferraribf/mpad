@@ -1,10 +1,20 @@
 'use client';
 
 import { ReactNode, createContext, useState } from 'react';
+import { Doc } from 'yjs';
 
 interface Window {
     width: number;
     height: number;
+}
+
+interface FileInfo {
+    id: string;
+    name: string;
+    size: number;
+    type: string;
+    data: string;
+    uploadedAt: number;
 }
 
 interface State {
@@ -18,6 +28,9 @@ interface State {
     updated: string;
     window: Window;
     transaction: number;
+    files: FileInfo[];
+    storage: boolean;
+    document: Doc | null;
 }
 
 const DEFAULT_STATE: State = {
@@ -31,21 +44,27 @@ const DEFAULT_STATE: State = {
     updated: '',
     window: { width: 0, height: 0 },
     transaction: 0,
+    files: [],
+    storage: false,
+    document: null,
 };
 
 export const ApplicationContext = createContext({ context: DEFAULT_STATE, setContext: (_: Partial<State>) => {} });
 
 export default function ApplicationContextProvider({ children }: { children: ReactNode }) {
-    const [connections, setConnections] = useState<State['connections']>(DEFAULT_STATE.connections);
-    const [content, setContent] = useState<State['content']>(DEFAULT_STATE.content);
-    const [loaded, setLoaded] = useState<State['loaded']>(DEFAULT_STATE.loaded);
-    const [layout, setLayout] = useState<State['layout']>(DEFAULT_STATE.layout);
-    const [explorer, setExplorer] = useState<State['explorer']>(DEFAULT_STATE.explorer);
-    const [command, setCommand] = useState<State['command']>(DEFAULT_STATE.command);
-    const [modified, setModified] = useState<State['modified']>(DEFAULT_STATE.modified);
-    const [updated, setUpdated] = useState<State['updated']>(DEFAULT_STATE.updated);
-    const [window, setWindow] = useState<State['window']>(DEFAULT_STATE.window);
-    const [transaction, setTransaction] = useState<State['transaction']>(DEFAULT_STATE.transaction);
+    const [connections, setConnections] = useState(DEFAULT_STATE.connections);
+    const [content, setContent] = useState(DEFAULT_STATE.content);
+    const [loaded, setLoaded] = useState(DEFAULT_STATE.loaded);
+    const [layout, setLayout] = useState(DEFAULT_STATE.layout);
+    const [explorer, setExplorer] = useState(DEFAULT_STATE.explorer);
+    const [command, setCommand] = useState(DEFAULT_STATE.command);
+    const [modified, setModified] = useState(DEFAULT_STATE.modified);
+    const [updated, setUpdated] = useState(DEFAULT_STATE.updated);
+    const [window, setWindow] = useState(DEFAULT_STATE.window);
+    const [transaction, setTransaction] = useState(DEFAULT_STATE.transaction);
+    const [files, setFiles] = useState(DEFAULT_STATE.files);
+    const [storage, setStorage] = useState(DEFAULT_STATE.storage);
+    const [document, setDocument] = useState(DEFAULT_STATE.document);
 
     const state = {
         connections,
@@ -58,6 +77,9 @@ export default function ApplicationContextProvider({ children }: { children: Rea
         updated,
         window,
         transaction,
+        files,
+        storage,
+        document,
     };
 
     const setContext = (context: Partial<State>) => {
@@ -71,6 +93,9 @@ export default function ApplicationContextProvider({ children }: { children: Rea
         context.updated !== undefined && setUpdated(context.updated);
         context.window !== undefined && setWindow(context.window);
         context.transaction !== undefined && setTransaction(context.transaction);
+        context.files !== undefined && setFiles(context.files);
+        context.storage !== undefined && setStorage(context.storage);
+        context.document !== undefined && setDocument(context.document);
     };
 
     return <ApplicationContext.Provider value={{ context: state, setContext }}>{children}</ApplicationContext.Provider>;

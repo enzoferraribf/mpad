@@ -3,16 +3,26 @@ import { useContext } from 'react';
 import { useTheme } from 'next-themes';
 
 import { ApplicationContext } from '@/app/context/context';
+import { useFileUpload } from '@/app/hooks/use-file-upload';
 
 import { CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/app/components/shadcn/command';
 
 export function CommandBar() {
     const { setTheme } = useTheme();
-
     const { context, setContext } = useContext(ApplicationContext);
+    const { handleFileUpload } = useFileUpload();
 
     const handleFiles = () => {
         setContext({ explorer: true, command: !context.command });
+    };
+
+    const handleStorage = () => {
+        setContext({ storage: true, command: !context.command });
+    };
+
+    const handleUploadCommand = () => {
+        handleFileUpload();
+        setContext({ command: !context.command });
     };
 
     const handleLayout = (layout: 'editor' | 'preview' | 'default') => {
@@ -36,6 +46,20 @@ export function CommandBar() {
                         <div className="command-item-spacing">
                             <h3 className="command-heading">📁 Explorer</h3>
                             <span className="command-description">{"View this pad's file structure."}</span>
+                        </div>
+                    </CommandItem>
+
+                    <CommandItem onSelect={() => handleUploadCommand()}>
+                        <div className="command-item-spacing">
+                            <h3 className="command-heading">📤 Upload File</h3>
+                            <span className="command-description">Upload files to this pad (max 5MB, 5 files)</span>
+                        </div>
+                    </CommandItem>
+
+                    <CommandItem onSelect={() => handleStorage()}>
+                        <div className="command-item-spacing">
+                            <h3 className="command-heading">🗄️ Storage</h3>
+                            <span className="command-description">View uploaded files in this pad</span>
                         </div>
                     </CommandItem>
                 </CommandGroup>

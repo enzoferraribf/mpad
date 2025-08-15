@@ -15,6 +15,7 @@ import { debounce } from '@/app/utils/debounce';
 import { handleServerDateTime } from '@/app/utils/datetime';
 
 import { write } from '@/app/actions/pad';
+import { useFileSync } from '@/app/hooks/use-file-sync';
 
 export function MarkdownEditor({ pathname, root, serverContent, ice }: { pathname: string; root: string; serverContent: Array<number> | null; ice: any }) {
     const monacoRef = useRef<editor.IStandaloneCodeEditor>(null);
@@ -24,6 +25,8 @@ export function MarkdownEditor({ pathname, root, serverContent, ice }: { pathnam
     const { resolvedTheme } = useTheme();
 
     const { context, setContext } = useContext(ApplicationContext);
+
+    useFileSync(pathname);
 
     useEffect(() => {
         return () => {
@@ -92,6 +95,8 @@ export function MarkdownEditor({ pathname, root, serverContent, ice }: { pathnam
             monacoRef.current = editor;
             documentRef.current = ydocument;
             bindingRef.current = binding;
+
+            setContext({ document: ydocument });
 
             // Y.js doesn't notify awareness for connection and focus... So, we need this lil hack.
             editor.setSelection({
