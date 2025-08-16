@@ -5,4 +5,5 @@ export type IApplicationGrid = {
     updated: number | null;
     related: string[];
     ice: any;
+    loadingPhrase: string;
 };

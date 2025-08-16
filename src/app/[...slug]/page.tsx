@@ -5,6 +5,8 @@ import dynamic from 'next/dynamic';
 import { initial, expandRoot } from '@/app/actions/pad';
 import { getICEServers } from '@/app/actions/web-rtc';
 
+import { getRandomPhrase } from '@/app/components/loading-phrases';
+
 import ApplicationContextProvider from '@/app/context/context';
 
 import { IMainApplication } from '@/app/models/main-application';
@@ -18,11 +20,13 @@ export default async function MainApplication({ params }: IMainApplication) {
 
     const document = '/' + resolved.slug.join('/');
 
+    const loadingPhrase = getRandomPhrase();
+
     const [initialContent, related, ice] = await Promise.all([initial(document), expandRoot('/' + root), getICEServers()]);
 
     return (
         <ApplicationContextProvider>
-            <ApplicationGrid pathname={document} root={root} content={initialContent.content} updated={initialContent.lastUpdate} related={related} ice={ice} />
+            <ApplicationGrid pathname={document} root={root} content={initialContent.content} updated={initialContent.lastUpdate} related={related} ice={ice} loadingPhrase={loadingPhrase} />
         </ApplicationContextProvider>
     );
 }

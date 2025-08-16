@@ -12,6 +12,7 @@ import { StatusBar } from '@/app/components/status-bar';
 import { CommandBar } from '@/app/components/command-bar';
 import { Explorer } from '@/app/components/explorer';
 import { Storage } from '@/app/components/storage';
+import { LoadingPhrases } from '@/app/components/loading-phrases';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/app/components/shadcn/resizable';
 
 import { handleServerDateTime } from '@/app/lib/datetime';
@@ -21,7 +22,7 @@ import { IApplicationGrid } from '@/app/models/application-grid';
 
 const MarkdownEditor = dynamic(() => import('@/app/components/markdown-editor').then(mod => ({ default: mod.MarkdownEditor })), { ssr: false });
 
-export default function ApplicationGrid({ pathname, root, content: serverContent, updated: serverUpdated, related, ice }: IApplicationGrid) {
+export default function ApplicationGrid({ pathname, root, content: serverContent, updated: serverUpdated, related, ice, loadingPhrase }: IApplicationGrid) {
     const { context, setContext } = useContext(ApplicationContext);
 
     useEffect(() => setContext({ updated: handleServerDateTime(serverUpdated) }), []);
@@ -41,8 +42,9 @@ export default function ApplicationGrid({ pathname, root, content: serverContent
             <Header />
 
             {/* Since we can't dynamically create the editor, we need this hidden hack to make sure that we have a proper loading screen */}
-            <div className={`${context.loaded && 'hidden'} center-content`}>
+            <div className={`${context.loaded && 'hidden'} center-column`}>
                 <h1 className="brand-title">Mpad</h1>
+                <LoadingPhrases phrase={loadingPhrase} />
             </div>
 
             <ResizablePanelGroup className={`${!context.loaded && 'hidden'}`} direction={context.window.width >= 768 ? 'horizontal' : 'vertical'}>
