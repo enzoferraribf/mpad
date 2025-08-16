@@ -3,12 +3,9 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/app/components/shadcn/dialog';
 import { Badge } from '@/app/components/shadcn/badge';
 
-interface HelpModalProps {
-    open: boolean;
-    onOpenChange: (open: boolean) => void;
-}
+import { IHelpModal } from '@/app/models/help-modal';
 
-export function HelpModal({ open, onOpenChange }: HelpModalProps) {
+export function HelpModal({ open, onOpenChange }: IHelpModal) {
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="max-w-2xl">
