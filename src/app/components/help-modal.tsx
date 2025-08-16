@@ -45,7 +45,7 @@ export function HelpModal({ open, onOpenChange }: IHelpModal) {
                                     </div>
                                     <div className="flex items-center justify-between">
                                         <span className="text-sm">📤 Upload File</span>
-                                        <span className="text-xs text-muted-foreground">Upload files. they'll only live while people are in the pad.</span>
+                                        <span className="text-xs text-muted-foreground">Upload files. they will only live while people are in the pad.</span>
                                     </div>
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-2">
