@@ -16,7 +16,10 @@ export function HelpModal({ open, onOpenChange }: IHelpModal) {
                 <div className="space-y-6">
                     <div>
                         <h3 className="mb-3 text-lg font-semibold">About Mpad</h3>
-                        <p className="text-sm text-muted-foreground">Mpad is a collaborative markdown editor with real-time previews. All changes are synced through WebRTC and persisted to ensure your documents are always available.</p>
+                        <p className="text-sm text-muted-foreground">
+                            Mpad is a collaborative markdown editor with real-time previews. All changes are synced through WebRTC and persisted to ensure your documents are always available. You can collaborate with the project in
+                            https://github.com/enzoferraribf/mpad
+                        </p>
                     </div>
 
                     <div>
