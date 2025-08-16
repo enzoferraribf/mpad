@@ -149,7 +149,7 @@ export function HelpModal({ open, onOpenChange }: IHelpModal) {
                                     <div className="rounded bg-muted p-2 font-mono text-xs">
                                         ```js
                                         <br />
-                                        const hello = "world";
+                                        const hello = &quot;world&quot;;
                                         <br />
                                         ```
                                     </div>
