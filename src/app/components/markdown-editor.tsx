@@ -77,7 +77,11 @@ export function MarkdownEditor({ pathname, root, serverContent, ice }: { pathnam
             let peerOptions = undefined;
 
             if (ice) {
-                peerOptions = { iceServers: ice };
+                peerOptions = {
+                    config: {
+                        iceServers: ice,
+                    },
+                };
             }
 
             const provider = new WebrtcProvider(pathname, ydocument, { signaling: [signaling], peerOpts: peerOptions });
