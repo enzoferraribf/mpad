@@ -1,4 +1,4 @@
-import { IStatusBar } from "@/app/models/status-bar";
+import { IStatusBar } from '@/app/models/status-bar';
 
 export function StatusBar({ pathname, hasModification, lastUpdate, spectators }: IStatusBar) {
     return (

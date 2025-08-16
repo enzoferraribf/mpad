@@ -18,27 +18,17 @@ export function Header() {
         <>
             <div className="fill-container surface-secondary section-padding relative">
                 <div className="flex justify-center">
-                    <button 
-                        onClick={() => setContext({ command: !context.command })}
-                        className="hover:opacity-80 transition-opacity"
-                    >
+                    <button onClick={() => setContext({ command: !context.command })} className="transition-opacity hover:opacity-80">
                         <h2 className="brand-subtitle">Mpad</h2>
                     </button>
                 </div>
-                
-                <button
-                    onClick={handleHelpClick}
-                    className="absolute right-4 top-1/2 transform -translate-y-1/2 p-2 hover:opacity-80 transition-opacity"
-                    aria-label="Help"
-                >
+
+                <button onClick={handleHelpClick} className="absolute right-4 top-1/2 -translate-y-1/2 transform p-2 transition-opacity hover:opacity-80" aria-label="Help">
                     <HelpCircle className="h-5 w-5" />
                 </button>
             </div>
 
-            <HelpModal 
-                open={context.help} 
-                onOpenChange={(open) => setContext({ help: open })} 
-            />
+            <HelpModal open={context.help} onOpenChange={open => setContext({ help: open })} />
         </>
     );
 }

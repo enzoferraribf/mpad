@@ -84,10 +84,9 @@ bun run migration.ts
 
 The database should be ready.
 
-### [Optional] Setup the WebRTC signaling server 
+### [Optional] Setup the WebRTC signaling server
 
 You'll only need this if you want to test Missopad to the fullest, meaning the real-time collaborative functions. If you to setup, go to the [Mpad WebRTC Server](https://github.com/enzoferraribf/mpad-ws) github page and follow the instructions.
-
 
 ### Run Missopad
 

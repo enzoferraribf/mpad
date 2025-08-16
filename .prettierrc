@@ -3,7 +3,5 @@
     "tabWidth": 4,
     "printWidth": 240,
     "arrowParens": "avoid",
-    "plugins": [
-        "prettier-plugin-tailwindcss"
-    ]
+    "plugins": ["prettier-plugin-tailwindcss"]
 }
