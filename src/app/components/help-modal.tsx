@@ -44,7 +44,7 @@ export function HelpModal({ open, onOpenChange }: HelpModalProps) {
                                             <span className="text-sm">📁 Explorer</span>
                                             <Badge variant="secondary">Ctrl + .</Badge>
                                         </div>
-                                        <span className="text-xs text-muted-foreground">View file structure</span>
+                                        <span className="text-xs text-muted-foreground">View file structure. You can create folders by using nested paths like /mpad/foo</span>
                                     </div>
                                     <div className="flex items-center justify-between">
                                         <span className="text-sm">📤 Upload File</span>
