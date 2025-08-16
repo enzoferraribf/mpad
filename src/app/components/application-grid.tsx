@@ -38,9 +38,7 @@ export default function ApplicationGrid({ pathname, root, content: serverContent
 
     return (
         <main className="main-grid">
-            <div onClick={() => setContext({ command: !context.command })}>
-                <Header />
-            </div>
+            <Header />
 
             {/* Since we can't dynamically create the editor, we need this hidden hack to make sure that we have a proper loading screen */}
             <div className={`${context.loaded && 'hidden'} center-content`}>

@@ -24,6 +24,7 @@ interface State {
     files: IEphemeralFile[];
     storage: boolean;
     fileDocument: Doc | null;
+    help: boolean;
 }
 
 const DEFAULT_STATE: State = {
@@ -40,6 +41,7 @@ const DEFAULT_STATE: State = {
     files: [],
     storage: false,
     fileDocument: null,
+    help: false,
 };
 
 export const ApplicationContext = createContext({ context: DEFAULT_STATE, setContext: (_: Partial<State>) => {} });
@@ -58,6 +60,7 @@ export default function ApplicationContextProvider({ children }: { children: Rea
     const [files, setFiles] = useState(DEFAULT_STATE.files);
     const [storage, setStorage] = useState(DEFAULT_STATE.storage);
     const [fileDocument, setFileDocument] = useState(DEFAULT_STATE.fileDocument);
+    const [help, setHelp] = useState(DEFAULT_STATE.help);
 
     const state = {
         connections,
@@ -73,6 +76,7 @@ export default function ApplicationContextProvider({ children }: { children: Rea
         files,
         storage,
         fileDocument,
+        help,
     };
 
     const setContext = (context: Partial<State>) => {
@@ -89,6 +93,7 @@ export default function ApplicationContextProvider({ children }: { children: Rea
         context.files !== undefined && setFiles(context.files);
         context.storage !== undefined && setStorage(context.storage);
         context.fileDocument !== undefined && setFileDocument(context.fileDocument);
+        context.help !== undefined && setHelp(context.help);
     };
 
     return <ApplicationContext.Provider value={{ context: state, setContext }}>{children}</ApplicationContext.Provider>;
