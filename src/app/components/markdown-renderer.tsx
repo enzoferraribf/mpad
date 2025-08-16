@@ -7,6 +7,7 @@ import RemarkGfm from 'remark-gfm';
 import RemarkBreaks from 'remark-breaks';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { nord, oneLight } from 'react-syntax-highlighter/dist/esm/styles/prism';
+
 import 'github-markdown-css';
 
 import { IMarkdownRenderer } from '@/app/models/markdown-renderer';
@@ -16,6 +17,7 @@ export function MarkdownRenderer({ content }: IMarkdownRenderer) {
 
     return (
         <ReactMarkdown
+            className="font-mono tracking-tight"
             children={content}
             remarkPlugins={[RemarkGfm, RemarkBreaks]}
             components={{
@@ -27,7 +29,7 @@ export function MarkdownRenderer({ content }: IMarkdownRenderer) {
                     }
 
                     return (
-                        <code className={className} {...rest}>
+                        <code className={`${className} font-mono`} {...rest}>
                             {children}
                         </code>
                     );

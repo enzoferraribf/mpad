@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Geist_Mono } from 'next/font/google';
+import { Geist, Geist_Mono } from 'next/font/google';
 
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
@@ -11,7 +11,8 @@ import { IRootLayout } from '@/app/models/layout';
 
 import './globals.css';
 
-const font = Geist_Mono({ subsets: ['latin'] });
+const geistSans = Geist({ subsets: ['latin'] });
+const geistMono = Geist_Mono({ subsets: ['latin'], variable: '--font-geist-mono' });
 
 export const metadata: Metadata = {
     title: 'Mpad',
@@ -43,7 +44,7 @@ export default function RootLayout({ children }: IRootLayout) {
                 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap" rel="stylesheet" />
             </head>
 
-            <body className={font.className}>
+            <body className={`${geistSans.className} ${geistMono.variable}`}>
                 <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
                     {children}
                     <Toaster />
