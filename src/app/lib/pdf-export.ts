@@ -1,24 +1,39 @@
-import { exportToPDF } from '@/app/actions/pdf';
+import { Marked } from 'marked';
+import { markedHighlight } from 'marked-highlight';
+import hljs from 'highlight.js';
+import { generatePDFTemplate } from '@/app/lib/pdf-template';
 
 export async function downloadPDF(content: string, theme: string = 'light'): Promise<void> {
-    const base64 = await exportToPDF(content, theme);
+    const marked = new Marked(
+        markedHighlight({
+            langPrefix: 'hljs language-',
+            highlight(code, lang) {
+                const language = hljs.getLanguage(lang) ? lang : 'plaintext';
+                return hljs.highlight(code, { language }).value;
+            },
+        }),
+    );
 
-    const buffer = Buffer.from(base64, 'base64');
+    const renderedContent = await marked.parse(content, {
+        gfm: true,
+        breaks: true,
+    });
 
-    const blob = new Blob([buffer], { type: 'application/pdf' });
+    const htmlContent = generatePDFTemplate(renderedContent, theme);
 
-    const url = URL.createObjectURL(blob);
+    const printWindow = window.open('', '_blank');
 
-    const link = document.createElement('a');
+    if (!printWindow) {
+        throw new Error('Unable to open print window');
+    }
 
-    link.href = url;
-    link.download = 'markdown-export.pdf';
+    printWindow.document.write(htmlContent);
+    printWindow.document.close();
 
-    document.body.appendChild(link);
-
-    link.click();
-
-    document.body.removeChild(link);
-
-    URL.revokeObjectURL(url);
+    printWindow.onload = () => {
+        setTimeout(() => {
+            printWindow.print();
+            printWindow.close();
+        }, 100);
+    };
 }

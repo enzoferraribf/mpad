@@ -61,12 +61,21 @@ export function generatePDFTemplate(content: string, theme: string): string {
                     height: auto;
                 }
                 @media print {
+                    @page {
+                        margin: 0;
+                        padding: 0;
+                    }
                     body {
                         background: ${themeColors.printBackground} !important;
+                        margin: 0 !important;
+                        padding: 0 !important;
                     }
                     .markdown-body {
                         background: ${themeColors.printBackground} !important;
                         color: ${themeColors.printText} !important;
+                        margin: 0 !important;
+                        padding: 20px !important;
+                        max-width: none !important;
                     }
                     pre, code {
                         background-color: ${themeColors.codeBackground} !important;
