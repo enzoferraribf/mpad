@@ -16,7 +16,9 @@ import { StatusBar } from '@/app/components/status-bar';
 import { CommandBar } from '@/app/components/command-bar';
 import { Explorer } from '@/app/components/explorer';
 import { Storage } from '@/app/components/storage';
-import { MarkdownEditor } from '@/app/components/markdown-editor';
+import dynamic from 'next/dynamic';
+
+const MarkdownEditor = dynamic(() => import('@/app/components/markdown-editor').then(mod => ({ default: mod.MarkdownEditor })), { ssr: false });
 
 import { IApplicationGrid } from '@/app/models/application-grid';
 
