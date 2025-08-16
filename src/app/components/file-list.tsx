@@ -27,7 +27,7 @@ export function FileList({ files }: FileListProps) {
     };
 
     if (files.length === 0) {
-        return <div className="p-4 text-muted-foreground">No files uploaded yet. Use the "Upload File" command to add files.</div>;
+        return <div className="p-4 text-muted-foreground">No files uploaded yet. Use the Upload File command to add files.</div>;
     }
 
     return (
