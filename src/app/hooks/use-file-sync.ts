@@ -1,6 +1,7 @@
 import { useContext, useEffect } from 'react';
-import { ApplicationContext } from '@/app/context/context';
-import { setupFileObserver } from '@/app/lib/file-sync';
+import { ApplicationContext, FileInfo } from '@/app/context/context';
+import { persistDocumentToLocalStorage, loadDocumentFromLocalStorage } from '@/app/lib/file-sync';
+import { debounce } from '@/app/utils/debounce';
 
 export const useFileSync = (pathname: string) => {
     const { context, setContext } = useContext(ApplicationContext);
@@ -10,10 +11,20 @@ export const useFileSync = (pathname: string) => {
 
         if (!pathname || !loaded || !fileDocument) return;
 
-        const cleanup = setupFileObserver(fileDocument, files => {
+        loadDocumentFromLocalStorage(fileDocument, pathname);
+
+        const arr = fileDocument.getArray<FileInfo>('files');
+
+        arr.observe(() => {
+            const files = arr.toArray();
             setContext({ files });
         });
 
-        return cleanup;
+        const files = arr.toArray();
+        setContext({ files });
+
+        fileDocument.on('afterAllTransactions', stateChangedDocument => {
+            debounce(1000, () => persistDocumentToLocalStorage(stateChangedDocument, pathname));
+        });
     }, [pathname, context.loaded, context.fileDocument]);
 };

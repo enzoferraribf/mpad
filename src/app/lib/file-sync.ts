@@ -1,4 +1,4 @@
-import { Doc } from 'yjs';
+import { Doc, encodeStateAsUpdate, applyUpdate } from 'yjs';
 
 interface FileInfo {
     id: string;
@@ -31,25 +31,20 @@ export const getFiles = (document: Doc): FileInfo[] => {
     return files.toArray();
 };
 
-type UnobserveCallback = () => void;
-type FileUpdateCallback = (files: FileInfo[]) => void;
+export const persistDocumentToLocalStorage = (document: Doc, pathname: string): void => {
+    const update = encodeStateAsUpdate(document);
+    const key = `missopad.files.${pathname}`;
+    localStorage.setItem(key, JSON.stringify(Array.from(update)));
+};
 
-export const setupFileObserver = (document: Doc, onFilesChanged: FileUpdateCallback): UnobserveCallback => {
-    const files = document.getArray<FileInfo>('files');
-
-    const observer = () => {
-        const items = files.toArray();
-        onFilesChanged(items);
-    };
-
-    files.observe(observer);
-
-    const initial = files.toArray();
-    if (initial.length > 0) {
-        onFilesChanged(initial);
+export const loadDocumentFromLocalStorage = (document: Doc, pathname: string): boolean => {
+    const key = `missopad.files.${pathname}`;
+    const storedState = localStorage.getItem(key);
+    if (storedState) {
+        const updateArray = JSON.parse(storedState);
+        const update = new Uint8Array(updateArray);
+        applyUpdate(document, update);
+        return true;
     }
-
-    return () => {
-        files.unobserve(observer);
-    };
+    return false;
 };

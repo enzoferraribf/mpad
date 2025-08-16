@@ -8,7 +8,7 @@ interface Window {
     height: number;
 }
 
-interface FileInfo {
+export interface FileInfo {
     id: string;
     name: string;
     size: number;
