@@ -21,6 +21,7 @@ export function MarkdownEditor({ pathname, root, serverContent, ice }: { pathnam
     const monacoRef = useRef<editor.IStandaloneCodeEditor>(null);
     const bindingRef = useRef<MonacoBinding>(null);
     const documentRef = useRef<Doc>(null);
+    const fileDocumentRef = useRef<Doc>(null);
 
     const { resolvedTheme } = useTheme();
 
@@ -33,6 +34,7 @@ export function MarkdownEditor({ pathname, root, serverContent, ice }: { pathnam
             bindingRef.current?.destroy();
             documentRef.current?.destroy();
             monacoRef.current?.dispose();
+            fileDocumentRef.current?.destroy();
         };
     }, []);
 
@@ -96,7 +98,10 @@ export function MarkdownEditor({ pathname, root, serverContent, ice }: { pathnam
             documentRef.current = ydocument;
             bindingRef.current = binding;
 
-            setContext({ document: ydocument });
+            const fileDocument = new Doc();
+            const _ = new WebrtcProvider(`${pathname}-files`, fileDocument, { signaling: [signaling], peerOpts: peerOptions });
+
+            setContext({ fileDocument });
 
             // Y.js doesn't notify awareness for connection and focus... So, we need this lil hack.
             editor.setSelection({

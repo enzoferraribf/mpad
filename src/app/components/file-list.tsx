@@ -30,9 +30,9 @@ export function FileList({ files }: FileListProps) {
     };
 
     const handleDelete = (id: string) => {
-        if (!context.document) return;
+        if (!context.fileDocument) return;
 
-        removeFile(context.document, id);
+        removeFile(context.fileDocument, id);
     };
 
     if (files.length === 0) {

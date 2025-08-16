@@ -66,9 +66,9 @@ export const useFileUpload = () => {
                 uploadedAt: Date.now()
             };
 
-            if (!context.document) return;
+            if (!context.fileDocument) return;
             
-            addFile(context.document, newFile);
+            addFile(context.fileDocument, newFile);
             showSuccess(file.name);
         };
         

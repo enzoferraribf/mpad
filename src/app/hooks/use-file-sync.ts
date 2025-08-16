@@ -6,14 +6,14 @@ export const useFileSync = (pathname: string) => {
     const { context, setContext } = useContext(ApplicationContext);
 
     useEffect(() => {
-        const { loaded, document } = context;
+        const { loaded, fileDocument } = context;
 
-        if (!pathname || !loaded || !document) return;
+        if (!pathname || !loaded || !fileDocument) return;
 
-        const cleanup = setupFileObserver(document, files => {
+        const cleanup = setupFileObserver(fileDocument, files => {
             setContext({ files });
         });
 
         return cleanup;
-    }, [pathname, context.loaded, context.document]);
+    }, [pathname, context.loaded, context.fileDocument]);
 };

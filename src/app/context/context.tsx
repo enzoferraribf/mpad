@@ -30,7 +30,7 @@ interface State {
     transaction: number;
     files: FileInfo[];
     storage: boolean;
-    document: Doc | null;
+    fileDocument: Doc | null;
 }
 
 const DEFAULT_STATE: State = {
@@ -46,7 +46,7 @@ const DEFAULT_STATE: State = {
     transaction: 0,
     files: [],
     storage: false,
-    document: null,
+    fileDocument: null,
 };
 
 export const ApplicationContext = createContext({ context: DEFAULT_STATE, setContext: (_: Partial<State>) => {} });
@@ -64,7 +64,7 @@ export default function ApplicationContextProvider({ children }: { children: Rea
     const [transaction, setTransaction] = useState(DEFAULT_STATE.transaction);
     const [files, setFiles] = useState(DEFAULT_STATE.files);
     const [storage, setStorage] = useState(DEFAULT_STATE.storage);
-    const [document, setDocument] = useState(DEFAULT_STATE.document);
+    const [fileDocument, setFileDocument] = useState(DEFAULT_STATE.fileDocument);
 
     const state = {
         connections,
@@ -79,7 +79,7 @@ export default function ApplicationContextProvider({ children }: { children: Rea
         transaction,
         files,
         storage,
-        document,
+        fileDocument,
     };
 
     const setContext = (context: Partial<State>) => {
@@ -95,7 +95,7 @@ export default function ApplicationContextProvider({ children }: { children: Rea
         context.transaction !== undefined && setTransaction(context.transaction);
         context.files !== undefined && setFiles(context.files);
         context.storage !== undefined && setStorage(context.storage);
-        context.document !== undefined && setDocument(context.document);
+        context.fileDocument !== undefined && setFileDocument(context.fileDocument);
     };
 
     return <ApplicationContext.Provider value={{ context: state, setContext }}>{children}</ApplicationContext.Provider>;
