@@ -25,6 +25,7 @@ interface State {
     storage: boolean;
     fileDocument: Doc | null;
     help: boolean;
+    loadingPDFGeneration: boolean;
 }
 
 const DEFAULT_STATE: State = {
@@ -42,6 +43,7 @@ const DEFAULT_STATE: State = {
     storage: false,
     fileDocument: null,
     help: false,
+    loadingPDFGeneration: false,
 };
 
 export const ApplicationContext = createContext({ context: DEFAULT_STATE, setContext: (_: Partial<State>) => {} });
@@ -61,6 +63,7 @@ export default function ApplicationContextProvider({ children }: { children: Rea
     const [storage, setStorage] = useState(DEFAULT_STATE.storage);
     const [fileDocument, setFileDocument] = useState(DEFAULT_STATE.fileDocument);
     const [help, setHelp] = useState(DEFAULT_STATE.help);
+    const [loadingPDFGeneration, setLoadingPDFGeneration] = useState(DEFAULT_STATE.loadingPDFGeneration);
 
     const state = {
         connections,
@@ -77,6 +80,7 @@ export default function ApplicationContextProvider({ children }: { children: Rea
         storage,
         fileDocument,
         help,
+        loadingPDFGeneration,
     };
 
     const setContext = (context: Partial<State>) => {
@@ -94,6 +98,7 @@ export default function ApplicationContextProvider({ children }: { children: Rea
         context.storage !== undefined && setStorage(context.storage);
         context.fileDocument !== undefined && setFileDocument(context.fileDocument);
         context.help !== undefined && setHelp(context.help);
+        context.loadingPDFGeneration !== undefined && setLoadingPDFGeneration(context.loadingPDFGeneration);
     };
 
     return <ApplicationContext.Provider value={{ context: state, setContext }}>{children}</ApplicationContext.Provider>;

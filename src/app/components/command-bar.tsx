@@ -8,10 +8,12 @@ import { CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, C
 
 import { useFileUpload } from '@/app/hooks/use-file-upload';
 
+import { downloadPDF } from '@/app/lib/pdf-export';
+
 export function CommandBar() {
     const { context, setContext } = useContext(ApplicationContext);
 
-    const { setTheme } = useTheme();
+    const { setTheme, resolvedTheme } = useTheme();
 
     const { handleFileUpload } = useFileUpload();
 
@@ -26,6 +28,15 @@ export function CommandBar() {
     const handleUploadCommand = () => {
         handleFileUpload();
         setContext({ command: !context.command });
+    };
+
+    const handlePDFExport = async () => {
+        setContext({ loadingPDFGeneration: true });
+        try {
+            await downloadPDF(context.content, resolvedTheme);
+        } finally {
+            setContext({ loadingPDFGeneration: false });
+        }
     };
 
     const handleLayout = (layout: 'editor' | 'preview' | 'default') => {
@@ -63,6 +74,13 @@ export function CommandBar() {
                         <div className="command-item-spacing">
                             <h3 className="command-heading">🗄️ Storage</h3>
                             <span className="command-description">View uploaded files in this pad</span>
+                        </div>
+                    </CommandItem>
+
+                    <CommandItem onSelect={() => handlePDFExport()}>
+                        <div className="command-item-spacing">
+                            <h3 className="command-heading">{context.loadingPDFGeneration ? '⏳' : '📄'} Export to PDF</h3>
+                            <span className="command-description">{context.loadingPDFGeneration ? 'Generating PDF...' : 'Export rendered markdown to PDF with current styles'}</span>
                         </div>
                     </CommandItem>
                 </CommandGroup>

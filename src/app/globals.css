@@ -136,6 +136,11 @@
     margin: auto;
 }
 
+.markdown-body div[class*="language-"],
+.markdown-body pre {
+    --bgColor-muted: transparent !important;
+}
+
 .background-animate {
     background-size: 400%;
 

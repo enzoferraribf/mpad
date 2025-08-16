@@ -6,7 +6,7 @@ import ReactMarkdown from 'react-markdown';
 import RemarkGfm from 'remark-gfm';
 import RemarkBreaks from 'remark-breaks';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { nord, oneLight } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { vscDarkPlus, oneLight } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 import 'github-markdown-css';
 
@@ -25,7 +25,7 @@ export function MarkdownRenderer({ content }: IMarkdownRenderer) {
                     const match = /language-(\w+)/.exec(className || '');
 
                     if (match) {
-                        return <SyntaxHighlighter PreTag="div" children={String(children).replace(/\n$/, '')} language={match[1]} style={resolvedTheme === 'dark' ? nord : oneLight} />;
+                        return <SyntaxHighlighter PreTag="div" children={String(children).replace(/\n$/, '')} language={match[1]} style={resolvedTheme === 'dark' ? vscDarkPlus : oneLight} />;
                     }
 
                     return (
