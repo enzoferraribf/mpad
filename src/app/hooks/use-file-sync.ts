@@ -1,5 +1,8 @@
 import { useContext, useEffect } from 'react';
-import { ApplicationContext, EphemeralFile } from '@/app/context/context';
+
+import { ApplicationContext } from '@/app/context/context';
+
+import { IEphemeralFile } from '@/app/models/files';
 
 export const useFileSync = (pathname: string) => {
     const { context, setContext } = useContext(ApplicationContext);
@@ -9,7 +12,7 @@ export const useFileSync = (pathname: string) => {
 
         if (!pathname || !loaded || !fileDocument) return;
 
-        const yarray = fileDocument.getArray<EphemeralFile>('files');
+        const yarray = fileDocument.getArray<IEphemeralFile>('files');
 
         const updateContext = () => {
             const files = yarray.toArray();
