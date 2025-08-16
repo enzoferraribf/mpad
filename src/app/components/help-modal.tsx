@@ -8,7 +8,7 @@ import { IHelpModal } from '@/app/models/help-modal';
 export function HelpModal({ open, onOpenChange }: IHelpModal) {
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+            <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle>Instructions</DialogTitle>
                 </DialogHeader>
@@ -44,11 +44,11 @@ export function HelpModal({ open, onOpenChange }: IHelpModal) {
                                             <span className="text-sm">📁 Explorer</span>
                                             <Badge variant="secondary">Ctrl + .</Badge>
                                         </div>
-                                        <span className="text-xs text-muted-foreground">View file structure. You can create folders by using nested paths like /mpad/foo</span>
+                                        <span className="text-xs text-muted-foreground">View file structure. Create folders by using paths like /mpad/foo</span>
                                     </div>
                                     <div className="flex items-center justify-between">
                                         <span className="text-sm">📤 Upload File</span>
-                                        <span className="text-xs text-muted-foreground">Upload files. they will only live while people are in the pad</span>
+                                        <span className="text-xs text-muted-foreground">Upload files. They will only live while people are in the pad</span>
                                     </div>
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-2">
@@ -56,6 +56,10 @@ export function HelpModal({ open, onOpenChange }: IHelpModal) {
                                             <Badge variant="secondary">Ctrl + ;</Badge>
                                         </div>
                                         <span className="text-xs text-muted-foreground">View uploaded files</span>
+                                    </div>
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-sm">📄 Export PDF</span>
+                                        <span className="text-xs text-muted-foreground">Export current document as PDF</span>
                                     </div>
                                 </div>
                             </div>
@@ -88,6 +92,77 @@ export function HelpModal({ open, onOpenChange }: IHelpModal) {
                                     <div className="flex items-center justify-between">
                                         <span className="text-sm">☀️ Light</span>
                                         <span className="text-xs text-muted-foreground">Switch to light mode</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 className="mb-3 text-lg font-semibold">Markdown Syntax</h3>
+                        <div className="space-y-4">
+                            <div className="space-y-3">
+                                <h4 className="text-sm font-medium">Headers</h4>
+                                <div className="ml-4 space-y-1">
+                                    <div className="rounded bg-muted p-2 font-mono text-xs"># Header 1</div>
+                                    <div className="rounded bg-muted p-2 font-mono text-xs">## Header 2</div>
+                                    <div className="rounded bg-muted p-2 font-mono text-xs">### Header 3</div>
+                                </div>
+                            </div>
+
+                            <div className="space-y-3">
+                                <h4 className="text-sm font-medium">Text Formatting</h4>
+                                <div className="ml-4 space-y-1">
+                                    <div className="rounded bg-muted p-2 font-mono text-xs">**bold text**</div>
+                                    <div className="rounded bg-muted p-2 font-mono text-xs">*italic text*</div>
+                                    <div className="rounded bg-muted p-2 font-mono text-xs">~~strikethrough~~</div>
+                                    <div className="rounded bg-muted p-2 font-mono text-xs">`inline code`</div>
+                                </div>
+                            </div>
+
+                            <div className="space-y-3">
+                                <h4 className="text-sm font-medium">Lists</h4>
+                                <div className="ml-4 space-y-1">
+                                    <div className="rounded bg-muted p-2 font-mono text-xs">
+                                        - Bullet point
+                                        <br />- Another item
+                                    </div>
+                                    <div className="rounded bg-muted p-2 font-mono text-xs">
+                                        1. Numbered list
+                                        <br />
+                                        2. Second item
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="space-y-3">
+                                <h4 className="text-sm font-medium">Links & Images</h4>
+                                <div className="ml-4 space-y-1">
+                                    <div className="rounded bg-muted p-2 font-mono text-xs">[Link text](https://example.com)</div>
+                                    <div className="rounded bg-muted p-2 font-mono text-xs">![Image alt](image-url.jpg)</div>
+                                </div>
+                            </div>
+
+                            <div className="space-y-3">
+                                <h4 className="text-sm font-medium">Code Blocks</h4>
+                                <div className="ml-4 space-y-1">
+                                    <div className="rounded bg-muted p-2 font-mono text-xs">
+                                        ```js
+                                        <br />
+                                        const hello = "world";
+                                        <br />
+                                        ```
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="space-y-3">
+                                <h4 className="text-sm font-medium">Tables</h4>
+                                <div className="ml-4 space-y-1">
+                                    <div className="rounded bg-muted p-2 font-mono text-xs">
+                                        | Header 1 | Header 2 |<br />
+                                        |----------|----------|
+                                        <br />| Cell 1 | Cell 2 |
                                     </div>
                                 </div>
                             </div>
