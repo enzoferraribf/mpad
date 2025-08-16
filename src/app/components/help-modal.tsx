@@ -2,6 +2,7 @@
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/app/components/shadcn/dialog';
 import { Badge } from '@/app/components/shadcn/badge';
+import { ExternalLink } from 'lucide-react';
 
 import { IHelpModal } from '@/app/models/help-modal';
 
@@ -17,8 +18,16 @@ export function HelpModal({ open, onOpenChange }: IHelpModal) {
                     <div>
                         <h3 className="mb-3 text-lg font-semibold">What is Mpad?</h3>
                         <p className="text-sm text-muted-foreground">
-                            Mpad is a collaborative markdown editor with real-time previews. All changes are synced through WebRTC and persisted to ensure your documents are always available. You can collaborate with the project in
-                            https://github.com/enzoferraribf/mpad.
+                            Mpad is a collaborative markdown editor with real-time previews. All changes are synced through WebRTC and persisted to ensure your documents are always available.{' '}
+                            <a
+                                href="https://github.com/enzoferraribf/mpad"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1 align-baseline text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+                            >
+                                <ExternalLink className="h-4 w-4" />
+                                Mpad Github
+                            </a>
                         </p>
                     </div>
 
