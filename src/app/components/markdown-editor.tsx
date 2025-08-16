@@ -58,20 +58,61 @@ export function MarkdownEditor({ pathname, root, serverContent, ice }: { pathnam
         setContext({ content: text || '', modified: true });
     };
 
+    const loadServerContent = (ydocument: Doc) => {
+        if (!serverContent || serverContent.length === 0) {
+            return;
+        }
+
+        const buffer = new Uint8Array(serverContent);
+
+        applyUpdateV2(ydocument, buffer);
+
+        const documentText = ydocument.getText('monaco').toString();
+
+        setContext({ content: documentText });
+    };
+
+    const createWebRTCProvider = (pad: string, ydocument: Doc, signaling: string, peerOptions: any) => {
+        return new WebrtcProvider(pad, ydocument, { signaling: [signaling], peerOpts: peerOptions });
+    };
+
+    const setupMonacoBinding = (editor: editor.IStandaloneCodeEditor, ydocument: Doc, provider: WebrtcProvider) => {
+        const type = ydocument.getText('monaco');
+        const model = editor.getModel()!;
+        const editors = new Set([editor]);
+        const binding = new MonacoBinding(type, model, editors, provider.awareness);
+
+        binding.doc.on('afterAllTransactions', () => setContext({ transaction: Date.now() }));
+
+        monacoRef.current = editor;
+        documentRef.current = ydocument;
+        bindingRef.current = binding;
+    };
+
+    const initializeTextDocumentWebRTC = (editor: editor.IStandaloneCodeEditor, signaling: string, peerOptions: any) => {
+        const ydocument = new Doc();
+
+        loadServerContent(ydocument);
+
+        const provider = createWebRTCProvider(pathname, ydocument, signaling, peerOptions);
+
+        provider.awareness.on('change', () => setContext({ connections: provider.awareness.states.size || 1 }));
+
+        setupMonacoBinding(editor, ydocument, provider);
+    };
+
+    const initializeFileDocumentWebRTC = (signaling: string, peerOptions: any) => {
+        const fileDocument = new Doc();
+
+        const _ = createWebRTCProvider(`${pathname}-files`, fileDocument, signaling, peerOptions);
+
+        setContext({ fileDocument });
+
+        fileDocumentRef.current = fileDocument;
+    };
+
     const handleMonacoMount = async (editor: editor.IStandaloneCodeEditor, _: Monaco) => {
         if (typeof window !== 'undefined') {
-            const ydocument = new Doc();
-
-            if (serverContent && serverContent.length > 0) {
-                const buffer = new Uint8Array(serverContent);
-
-                applyUpdateV2(ydocument, buffer);
-
-                const documentText = ydocument.getText('monaco').toString();
-
-                setContext({ content: documentText });
-            }
-
             const signaling = process.env.NEXT_PUBLIC_SIGNALING_SERVER!;
 
             let peerOptions = undefined;
@@ -84,28 +125,8 @@ export function MarkdownEditor({ pathname, root, serverContent, ice }: { pathnam
                 };
             }
 
-            const provider = new WebrtcProvider(pathname, ydocument, { signaling: [signaling], peerOpts: peerOptions });
-
-            provider.awareness.on('change', () => setContext({ connections: provider.awareness.states.size || 1 }));
-
-            const type = ydocument.getText('monaco');
-
-            const model = editor.getModel()!;
-
-            const editors = new Set([editor]);
-
-            const binding = new MonacoBinding(type, model, editors, provider.awareness);
-
-            binding.doc.on('afterAllTransactions', () => setContext({ transaction: Date.now() }));
-
-            monacoRef.current = editor;
-            documentRef.current = ydocument;
-            bindingRef.current = binding;
-
-            const fileDocument = new Doc();
-            const _ = new WebrtcProvider(`${pathname}-files`, fileDocument, { signaling: [signaling], peerOpts: peerOptions });
-
-            setContext({ fileDocument });
+            initializeTextDocumentWebRTC(editor, signaling, peerOptions);
+            initializeFileDocumentWebRTC(signaling, peerOptions);
 
             // Y.js doesn't notify awareness for connection and focus... So, we need this lil hack.
             editor.setSelection({
