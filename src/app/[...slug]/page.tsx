@@ -1,5 +1,3 @@
-import React from 'react';
-
 import dynamic from 'next/dynamic';
 
 import { initial, expandRoot } from '@/app/actions/pad';

@@ -26,7 +26,7 @@ export function Explorer({ related }: { related: string[] }) {
 
                         return (
                             <CommandItem key={index} onSelect={() => handleNavigation(related)}>
-                                <div key={index} className="file-path-spacing status-text flex text-nowrap">
+                                <div className="file-path-spacing status-text flex text-nowrap">
                                     {/* Search seems to be based on inner elements. I added this hidden span so the search works with the full path */}
                                     <span hidden>{related}</span>
 
@@ -34,7 +34,7 @@ export function Explorer({ related }: { related: string[] }) {
                                         <Badge key={index}>{path}</Badge>
                                     ))}
 
-                                    <p key={index}>{decodeURIComponent(lastPath!)}</p>
+                                    <p>{decodeURIComponent(lastPath!)}</p>
                                 </div>
                             </CommandItem>
                         );
