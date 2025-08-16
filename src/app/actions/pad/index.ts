@@ -4,7 +4,7 @@ import { mergeUpdatesV2 } from 'yjs';
 import { cookies } from 'next/headers';
 import { eq } from 'drizzle-orm';
 
-import { PadSnapshot } from '@/app/models/pad';
+import { IPadSnapshot } from '@/app/models/pad';
 import { createDatabase } from '@/app/lib/db';
 import { pads } from '@/app/lib/schema';
 
@@ -19,7 +19,7 @@ function bufferize(data: string): number[] {
         .filter(num => !isNaN(num));
 }
 
-export async function initial(document: string): Promise<PadSnapshot> {
+export async function initial(document: string): Promise<IPadSnapshot> {
     const preventCaching = cookies();
 
     const database = createDatabase();

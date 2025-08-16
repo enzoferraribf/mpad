@@ -10,6 +10,8 @@ import './globals.css';
 import { ThemeProvider } from '@/app/components/shadcn/theme-provider';
 import { Toaster } from '@/app/components/shadcn/sonner';
 
+import { IRootLayout } from '@/app/models/layout';
+
 const font = JetBrains_Mono({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
@@ -17,11 +19,7 @@ export const metadata: Metadata = {
     description: 'Create collaborative notes on the fly',
 };
 
-interface RootLayoutProps {
-    children: React.ReactNode;
-}
-
-export default function RootLayout({ children }: RootLayoutProps) {
+export default function RootLayout({ children }: IRootLayout) {
     return (
         <html lang="en" suppressHydrationWarning>
             <head>

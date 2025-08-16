@@ -31,6 +31,8 @@ export default function ApplicationGrid({ pathname, root, content: serverContent
 
     useEffect(() => onCtrlKeyPressed('.', () => setContext({ explorer: !context.explorer })), []);
 
+    useEffect(() => onCtrlKeyPressed(';', () => setContext({ storage: !context.storage })), []);
+
     useEffect(() => onWindowResize(() => setContext({ window: { width: window.innerWidth, height: window.innerHeight } })), []);
 
     useEffect(() => setContext({ window: { width: window.innerWidth, height: window.innerHeight } }), []);

@@ -1,8 +1,8 @@
-export type Pad = {
+export type IPad = {
     id: string | null;
     root: string | null;
     content: Array<number> | null;
     lastUpdate: number | null;
 };
 
-export type PadSnapshot = Pick<Pad, 'content' | 'lastUpdate'>;
+export type IPadSnapshot = Pick<IPad, 'content' | 'lastUpdate'>;

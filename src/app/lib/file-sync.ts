@@ -1,20 +1,23 @@
-import { Doc, encodeStateAsUpdate, applyUpdate } from 'yjs';
+import { Doc } from 'yjs';
 
-import { EphemeralFile } from '@/app/context/context';
+import { IEphemeralFile } from '@/app/models/files';
 
-export const addFile = (document: Doc, file: EphemeralFile): void => {
-    const files = document.getArray<EphemeralFile>('files');
+export const addFile = (document: Doc, file: IEphemeralFile): void => {
+    const files = document.getArray<IEphemeralFile>('files');
+
     files.push([file]);
 };
 
 export const removeFile = (document: Doc, id: string): boolean => {
-    const files = document.getArray<EphemeralFile>('files');
+    const files = document.getArray<IEphemeralFile>('files');
+
     const index = files.toArray().findIndex(file => file.id === id);
 
     if (index === -1) return false;
 
     files.delete(index, 1);
+
     return true;
 };
 
-export const getFiles = (document: Doc): EphemeralFile[] => document.getArray<EphemeralFile>('files').toArray();
+export const getFiles = (document: Doc): IEphemeralFile[] => document.getArray<IEphemeralFile>('files').toArray();

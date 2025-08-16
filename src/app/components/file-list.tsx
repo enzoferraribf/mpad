@@ -1,19 +1,19 @@
 import { useContext } from 'react';
 
-import { ApplicationContext, EphemeralFile } from '@/app/context/context';
-import { removeFile } from '@/app/lib/file-sync';
-import { formatFileSize, formatUploadDate } from '@/app/utils/file';
+import { ApplicationContext } from '@/app/context/context';
 
 import { Button } from '@/app/components/shadcn/button';
 
-interface FileListProps {
-    files: EphemeralFile[];
-}
+import { removeFile } from '@/app/lib/file-sync';
 
-export function FileList({ files }: FileListProps) {
+import { formatFileSize, formatUploadDate } from '@/app/utils/file';
+
+import { IFileList, IEphemeralFile } from '@/app/models/files';
+
+export function FileList({ files }: IFileList) {
     const { context } = useContext(ApplicationContext);
 
-    const handleDownload = (file: EphemeralFile) => {
+    const handleDownload = (file: IEphemeralFile) => {
         const link = document.createElement('a');
         link.href = file.data;
         link.download = file.name;
@@ -22,7 +22,6 @@ export function FileList({ files }: FileListProps) {
 
     const handleDelete = (id: string) => {
         if (!context.fileDocument) return;
-
         removeFile(context.fileDocument, id);
     };
 
@@ -52,6 +51,7 @@ export function FileList({ files }: FileListProps) {
                         >
                             Download
                         </Button>
+
                         <Button
                             onClick={e => {
                                 e.stopPropagation();

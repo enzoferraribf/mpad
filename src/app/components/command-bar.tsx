@@ -8,8 +8,10 @@ import { useFileUpload } from '@/app/hooks/use-file-upload';
 import { CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/app/components/shadcn/command';
 
 export function CommandBar() {
-    const { setTheme } = useTheme();
     const { context, setContext } = useContext(ApplicationContext);
+
+    const { setTheme } = useTheme();
+
     const { handleFileUpload } = useFileUpload();
 
     const handleFiles = () => {

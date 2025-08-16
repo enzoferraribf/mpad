@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 import { ChangeEvent, FormEvent, useState } from 'react';
@@ -27,7 +26,7 @@ export default function Home() {
     }
 
     return (
-        <div className="center-fullscreen-column overflow-auto surface-primary">
+        <div className="center-fullscreen-column surface-primary overflow-auto">
             <div className="center-column">
                 <h1 className="brand-title">Mpad</h1>
                 <p>Collaborative documents in realtime</p>
@@ -38,7 +37,7 @@ export default function Home() {
                     <form className="content-spacing" onSubmit={handleNavigation}>
                         <label className="max-w-fit text-end">missopad.com/</label>
 
-                        <input className="mx-2 h-[2.25rem] w-48 max-w-48 surface-input content-padding outline-none" placeholder="..." onChange={handlePadChange} />
+                        <input className="surface-input content-padding mx-2 h-[2.25rem] w-48 max-w-48 outline-none" placeholder="..." onChange={handlePadChange} />
 
                         <button className="hover:opacity-70" type="submit">
                             🚀

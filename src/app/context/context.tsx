@@ -3,18 +3,11 @@
 import { ReactNode, createContext, useState } from 'react';
 import { Doc } from 'yjs';
 
+import { IEphemeralFile } from '@/app/models/files';
+
 interface Window {
     width: number;
     height: number;
-}
-
-export interface EphemeralFile {
-    id: string;
-    name: string;
-    size: number;
-    type: string;
-    data: string;
-    uploadedAt: number;
 }
 
 interface State {
@@ -28,7 +21,7 @@ interface State {
     updated: string;
     window: Window;
     transaction: number;
-    files: EphemeralFile[];
+    files: IEphemeralFile[];
     storage: boolean;
     fileDocument: Doc | null;
 }

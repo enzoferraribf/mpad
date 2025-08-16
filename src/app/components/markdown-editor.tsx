@@ -17,7 +17,9 @@ import { handleServerDateTime } from '@/app/utils/datetime';
 import { write } from '@/app/actions/pad';
 import { useFileSync } from '@/app/hooks/use-file-sync';
 
-export function MarkdownEditor({ pathname, root, serverContent, ice }: { pathname: string; root: string; serverContent: Array<number> | null; ice: any }) {
+import { IMarkdownEditor } from '@/app/models/markdown-editor';
+
+export function MarkdownEditor({ pathname, root, serverContent, ice }: IMarkdownEditor) {
     const monacoRef = useRef<editor.IStandaloneCodeEditor>(null);
     const bindingRef = useRef<MonacoBinding>(null);
     const documentRef = useRef<Doc>(null);
