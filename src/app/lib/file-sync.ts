@@ -18,17 +18,3 @@ export const removeFile = (document: Doc, id: string): boolean => {
 };
 
 export const getFiles = (document: Doc): EphemeralFile[] => document.getArray<EphemeralFile>('files').toArray();
-
-export const persistDocumentToLocalStorage = (document: Doc, pathname: string): void => {
-    const update = encodeStateAsUpdate(document);
-    localStorage.setItem(`missopad.files.${pathname}`, JSON.stringify(Array.from(update)));
-};
-
-export const loadDocumentFromLocalStorage = (document: Doc, pathname: string): boolean => {
-    const storedState = localStorage.getItem(`missopad.files.${pathname}`);
-    if (!storedState) return false;
-
-    const updateArray = JSON.parse(storedState);
-    applyUpdate(document, new Uint8Array(updateArray));
-    return true;
-};
