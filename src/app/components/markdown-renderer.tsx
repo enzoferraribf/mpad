@@ -1,16 +1,12 @@
 /* eslint-disable react/no-children-prop */
 
-import RemarkGfm from 'remark-gfm';
-
 import { useTheme } from 'next-themes';
 
-import RemarkBreaks from 'remark-breaks';
-
 import ReactMarkdown from 'react-markdown';
-
+import RemarkGfm from 'remark-gfm';
+import RemarkBreaks from 'remark-breaks';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { nord, oneLight } from 'react-syntax-highlighter/dist/esm/styles/prism';
-
 import 'github-markdown-css';
 
 import { IMarkdownRenderer } from '@/app/models/markdown-renderer';

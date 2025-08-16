@@ -5,8 +5,8 @@ import { ApplicationContext } from '@/app/context/context';
 import { Button } from '@/app/components/shadcn/button';
 
 import { removeFile } from '@/app/lib/file-sync';
-
-import { formatFileSize, formatUploadDate } from '@/app/utils/file';
+import { formatFileSize } from '@/app/lib/file';
+import { formatUploadDate } from '@/app/lib/datetime';
 
 import { IFileList, IEphemeralFile } from '@/app/models/files';
 

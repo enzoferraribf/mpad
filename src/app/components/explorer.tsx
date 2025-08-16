@@ -2,10 +2,10 @@ import { useContext } from 'react';
 
 import { useRouter } from 'next/navigation';
 
+import { ApplicationContext } from '@/app/context/context';
+
 import { Badge } from '@/app/components/shadcn/badge';
 import { CommandDialog, CommandGroup, CommandInput, CommandItem } from '@/app/components/shadcn/command';
-
-import { ApplicationContext } from '@/app/context/context';
 
 export function Explorer({ related }: { related: string[] }) {
     const { push } = useRouter();

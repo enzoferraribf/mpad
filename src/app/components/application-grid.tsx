@@ -2,13 +2,9 @@
 
 import React, { useContext, useEffect } from 'react';
 
+import dynamic from 'next/dynamic';
+
 import { ApplicationContext } from '@/app/context/context';
-
-import { handleServerDateTime } from '@/app/utils/datetime';
-
-import { onCtrlKeyPressed, onWindowResize } from '@/app/utils/events';
-
-import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/app/components/shadcn/resizable';
 
 import { Header } from '@/app/components/header';
 import { MarkdownRenderer } from '@/app/components/markdown-renderer';
@@ -16,11 +12,14 @@ import { StatusBar } from '@/app/components/status-bar';
 import { CommandBar } from '@/app/components/command-bar';
 import { Explorer } from '@/app/components/explorer';
 import { Storage } from '@/app/components/storage';
-import dynamic from 'next/dynamic';
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/app/components/shadcn/resizable';
 
-const MarkdownEditor = dynamic(() => import('@/app/components/markdown-editor').then(mod => ({ default: mod.MarkdownEditor })), { ssr: false });
+import { handleServerDateTime } from '@/app/lib/datetime';
+import { onCtrlKeyPressed, onWindowResize } from '@/app/lib/events';
 
 import { IApplicationGrid } from '@/app/models/application-grid';
+
+const MarkdownEditor = dynamic(() => import('@/app/components/markdown-editor').then(mod => ({ default: mod.MarkdownEditor })), { ssr: false });
 
 export default function ApplicationGrid({ pathname, root, content: serverContent, updated: serverUpdated, related, ice }: IApplicationGrid) {
     const { context, setContext } = useContext(ApplicationContext);

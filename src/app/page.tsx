@@ -1,8 +1,8 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
-
 import { ChangeEvent, FormEvent, useState } from 'react';
+
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
     const [pad, setPad] = useState<string>('');

@@ -3,9 +3,10 @@ import { useContext } from 'react';
 import { useTheme } from 'next-themes';
 
 import { ApplicationContext } from '@/app/context/context';
-import { useFileUpload } from '@/app/hooks/use-file-upload';
 
 import { CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/app/components/shadcn/command';
+
+import { useFileUpload } from '@/app/hooks/use-file-upload';
 
 export function CommandBar() {
     const { context, setContext } = useContext(ApplicationContext);

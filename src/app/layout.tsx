@@ -1,18 +1,17 @@
 import type { Metadata } from 'next';
+import { Geist_Mono } from 'next/font/google';
 
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
-
-import { JetBrains_Mono } from 'next/font/google';
-
-import './globals.css';
 
 import { ThemeProvider } from '@/app/components/shadcn/theme-provider';
 import { Toaster } from '@/app/components/shadcn/sonner';
 
 import { IRootLayout } from '@/app/models/layout';
 
-const font = JetBrains_Mono({ subsets: ['latin'] });
+import './globals.css';
+
+const font = Geist_Mono({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
     title: 'Mpad',

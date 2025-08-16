@@ -4,18 +4,18 @@ import { useTheme } from 'next-themes';
 
 import { editor } from 'monaco-editor';
 import Editor, { Monaco } from '@monaco-editor/react';
-
 import { Doc, applyUpdateV2, encodeStateAsUpdateV2 } from 'yjs';
 import { MonacoBinding } from 'y-monaco';
 import { WebrtcProvider } from 'y-webrtc';
 
+import { write } from '@/app/actions/pad';
+
 import { ApplicationContext } from '@/app/context/context';
 
-import { debounce } from '@/app/utils/debounce';
-import { handleServerDateTime } from '@/app/utils/datetime';
-
-import { write } from '@/app/actions/pad';
 import { useFileSync } from '@/app/hooks/use-file-sync';
+
+import { debounce } from '@/app/lib/debounce';
+import { handleServerDateTime } from '@/app/lib/datetime';
 
 import { IMarkdownEditor } from '@/app/models/markdown-editor';
 

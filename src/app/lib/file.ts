@@ -6,7 +6,3 @@ export const formatFileSize = (bytes: number): string => {
     
     return `${(bytes / Math.pow(1024, index)).toFixed(1)} ${units[index]}`;
 };
-
-export const formatUploadDate = (timestamp: number): string => {
-    return new Date(timestamp).toLocaleDateString();
-};
