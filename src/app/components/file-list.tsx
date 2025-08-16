@@ -1,28 +1,19 @@
 import { useContext } from 'react';
 
-import { ApplicationContext } from '@/app/context/context';
+import { ApplicationContext, EphemeralFile } from '@/app/context/context';
 import { removeFile } from '@/app/lib/file-sync';
 import { formatFileSize, formatUploadDate } from '@/app/utils/file';
 
 import { Button } from '@/app/components/shadcn/button';
 
-interface FileInfo {
-    id: string;
-    name: string;
-    size: number;
-    type: string;
-    data: string;
-    uploadedAt: number;
-}
-
 interface FileListProps {
-    files: FileInfo[];
+    files: EphemeralFile[];
 }
 
 export function FileList({ files }: FileListProps) {
     const { context } = useContext(ApplicationContext);
 
-    const handleDownload = (file: FileInfo) => {
+    const handleDownload = (file: EphemeralFile) => {
         const link = document.createElement('a');
         link.href = file.data;
         link.download = file.name;

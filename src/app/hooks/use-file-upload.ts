@@ -1,63 +1,34 @@
 import { useContext } from 'react';
-import { ApplicationContext } from '@/app/context/context';
+import { ApplicationContext, EphemeralFile } from '@/app/context/context';
 import { addFile } from '@/app/lib/file-sync';
 import { toast } from 'sonner';
 
-interface FileInfo {
-    id: string;
-    name: string;
-    size: number;
-    type: string;
-    data: string;
-    uploadedAt: number;
-}
-
-const FILE_SIZE_LIMIT = 5 * 1024 * 1024; // 5MB
+const FILE_SIZE_LIMIT = 5 * 1024 * 1024;
 const MAX_FILES = 5;
-
-interface ValidationResult {
-    isValid: boolean;
-    error?: string;
-}
 
 export const useFileUpload = () => {
     const { context } = useContext(ApplicationContext);
 
-    const validateFile = (file: File, currentFileCount: number): ValidationResult => {
+    const validateFile = (file: File, currentFileCount: number): string | null => {
         if (file.size > FILE_SIZE_LIMIT) {
-            return {
-                isValid: false,
-                error: `${file.name} is larger than 5MB limit`
-            };
+            return `${file.name} is larger than 5MB limit`;
         }
-
         if (currentFileCount >= MAX_FILES) {
-            return {
-                isValid: false,
-                error: "Maximum of 5 files allowed per pad"
-            };
+            return "Maximum of 5 files allowed per pad";
         }
-
-        return { isValid: true };
+        return null;
     };
 
-    const showError = (error: string) => {
-        toast.error("Upload failed", {
-            description: error,
-        });
-    };
-
-    const showSuccess = (fileName: string) => {
-        toast.success("File uploaded", {
-            description: `${fileName} has been uploaded successfully`,
-        });
+    const showToast = (type: 'error' | 'success', title: string, description: string) => {
+        toast[type](title, { description });
     };
 
     const processFile = (file: File) => {
-        const reader = new FileReader();
+        if (!context.fileDocument) return;
         
+        const reader = new FileReader();
         reader.onload = (e) => {
-            const newFile: FileInfo = {
+            const newFile: EphemeralFile = {
                 id: crypto.randomUUID(),
                 name: file.name,
                 size: file.size,
@@ -65,13 +36,10 @@ export const useFileUpload = () => {
                 data: e.target?.result as string,
                 uploadedAt: Date.now()
             };
-
-            if (!context.fileDocument) return;
             
-            addFile(context.fileDocument, newFile);
-            showSuccess(file.name);
+            addFile(context.fileDocument!, newFile);
+            showToast('success', 'File uploaded', `${file.name} has been uploaded successfully`);
         };
-        
         reader.readAsDataURL(file);
     };
 
@@ -86,10 +54,10 @@ export const useFileUpload = () => {
 
             let validCount = 0;
             Array.from(files).forEach(file => {
-                const validation = validateFile(file, context.files.length + validCount);
+                const error = validateFile(file, context.files.length + validCount);
                 
-                if (!validation.isValid) {
-                    showError(validation.error!);
+                if (error) {
+                    showToast('error', 'Upload failed', error);
                     return;
                 }
 

@@ -1,5 +1,5 @@
 import { useContext, useEffect } from 'react';
-import { ApplicationContext, FileInfo } from '@/app/context/context';
+import { ApplicationContext, EphemeralFile } from '@/app/context/context';
 import { persistDocumentToLocalStorage, loadDocumentFromLocalStorage } from '@/app/lib/file-sync';
 import { debounce } from '@/app/utils/debounce';
 
@@ -13,15 +13,15 @@ export const useFileSync = (pathname: string) => {
 
         loadDocumentFromLocalStorage(fileDocument, pathname);
 
-        const arr = fileDocument.getArray<FileInfo>('files');
+        const yarray = fileDocument.getArray<EphemeralFile>('files');
 
-        arr.observe(() => {
-            const files = arr.toArray();
+        const updateContext = () => {
+            const files = yarray.toArray();
             setContext({ files });
-        });
+        };
 
-        const files = arr.toArray();
-        setContext({ files });
+        yarray.observe(updateContext);
+        updateContext();
 
         fileDocument.on('afterAllTransactions', stateChangedDocument => {
             debounce(1000, () => persistDocumentToLocalStorage(stateChangedDocument, pathname));

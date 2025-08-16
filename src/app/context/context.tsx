@@ -8,7 +8,7 @@ interface Window {
     height: number;
 }
 
-export interface FileInfo {
+export interface EphemeralFile {
     id: string;
     name: string;
     size: number;
@@ -28,7 +28,7 @@ interface State {
     updated: string;
     window: Window;
     transaction: number;
-    files: FileInfo[];
+    files: EphemeralFile[];
     storage: boolean;
     fileDocument: Doc | null;
 }
