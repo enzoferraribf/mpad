@@ -8,7 +8,7 @@ import { IHelpModal } from '@/app/models/help-modal';
 export function HelpModal({ open, onOpenChange }: IHelpModal) {
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="max-w-2xl">
+            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle>Instructions</DialogTitle>
                 </DialogHeader>
