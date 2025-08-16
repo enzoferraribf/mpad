@@ -10,15 +10,15 @@ export function HelpModal({ open, onOpenChange }: IHelpModal) {
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="max-w-2xl">
                 <DialogHeader>
-                    <DialogTitle>Mpad Help</DialogTitle>
+                    <DialogTitle>Instructions</DialogTitle>
                 </DialogHeader>
 
                 <div className="space-y-6">
                     <div>
-                        <h3 className="mb-3 text-lg font-semibold">About Mpad</h3>
+                        <h3 className="mb-3 text-lg font-semibold">What is Mpad?</h3>
                         <p className="text-sm text-muted-foreground">
                             Mpad is a collaborative markdown editor with real-time previews. All changes are synced through WebRTC and persisted to ensure your documents are always available. You can collaborate with the project in
-                            https://github.com/enzoferraribf/mpad
+                            https://github.com/enzoferraribf/mpad.
                         </p>
                     </div>
 
@@ -48,7 +48,7 @@ export function HelpModal({ open, onOpenChange }: IHelpModal) {
                                     </div>
                                     <div className="flex items-center justify-between">
                                         <span className="text-sm">📤 Upload File</span>
-                                        <span className="text-xs text-muted-foreground">Upload files. they will only live while people are in the pad.</span>
+                                        <span className="text-xs text-muted-foreground">Upload files. they will only live while people are in the pad</span>
                                     </div>
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-2">
