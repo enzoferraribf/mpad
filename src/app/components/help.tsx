@@ -4,9 +4,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/app/componen
 import { Badge } from '@/app/components/shadcn/badge';
 import { ExternalLink } from 'lucide-react';
 
-import { IHelpModal } from '@/app/models/help-modal';
+import { IHelp } from '@/app/models/help';
 
-export function HelpModal({ open, onOpenChange }: IHelpModal) {
+export function Help({ open, onOpenChange }: IHelp) {
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">

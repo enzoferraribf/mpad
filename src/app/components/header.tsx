@@ -3,7 +3,7 @@
 import { HelpCircle } from 'lucide-react';
 
 import { useUIStore } from '@/app/stores/ui-store';
-import { HelpModal } from '@/app/components/help-modal';
+import { Help } from '@/app/components/help';
 
 export function Header() {
     const { command, help, setCommand, setHelp } = useUIStore();
@@ -31,7 +31,7 @@ export function Header() {
                 </button>
             </div>
 
-            <HelpModal open={help} onOpenChange={setHelp} />
+            <Help open={help} onOpenChange={setHelp} />
         </>
     );
 }

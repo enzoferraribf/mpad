@@ -1,4 +1,4 @@
-export type IHelpModal = {
+export type IHelp = {
     open: boolean;
     onOpenChange: (open: boolean) => void;
 };
