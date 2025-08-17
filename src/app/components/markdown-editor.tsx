@@ -4,7 +4,7 @@ import { useTheme } from 'next-themes';
 
 import { editor } from 'monaco-editor';
 import Editor, { Monaco } from '@monaco-editor/react';
-import { Doc, applyUpdateV2, encodeStateAsUpdateV2 } from 'yjs';
+import { Doc, encodeStateAsUpdateV2 } from 'yjs';
 import { MonacoBinding } from 'y-monaco';
 import { WebrtcProvider } from 'y-webrtc';
 
@@ -16,30 +16,27 @@ import { useFileStore } from '@/app/stores/file-store';
 
 import { debounce } from '@/app/lib/debounce';
 import { handleServerDateTime } from '@/app/lib/datetime';
+import { DocumentBuilder } from '@/app/lib/document-builder';
 
 import { IMarkdownEditor } from '@/app/models/markdown-editor';
 
 export function MarkdownEditor({ pathname, root, serverContent, ice }: IMarkdownEditor) {
     const monacoRef = useRef<editor.IStandaloneCodeEditor>(null);
-    const bindingRef = useRef<MonacoBinding>(null);
-    const documentRef = useRef<Doc>(null);
-    const fileDocumentRef = useRef<Doc>(null);
+    const documentBuilderRef = useRef<DocumentBuilder>(null);
+    const fileDocumentBuilderRef = useRef<DocumentBuilder>(null);
 
     const { resolvedTheme } = useTheme();
 
-    const { getTextLoaded, setTextDocument, setTextModified, setTextUpdated } = useDocumentStore();
+    const { textDocument, getTextLoaded, setTextDocument, setTextModified, setTextUpdated } = useDocumentStore();
 
     const { transaction, setConnections, setTransaction } = useConnectionStore();
 
     const { setFileDocument } = useFileStore();
 
-    const loaded = getTextLoaded();
-
     useEffect(() => {
         return () => {
-            bindingRef.current?.destroy();
-            documentRef.current?.destroy();
-            fileDocumentRef.current?.destroy();
+            documentBuilderRef.current?.destroy();
+            fileDocumentBuilderRef.current?.destroy();
             monacoRef.current?.dispose();
         };
     }, []);
@@ -47,11 +44,9 @@ export function MarkdownEditor({ pathname, root, serverContent, ice }: IMarkdown
     useEffect(() => debounce(500, async () => transact(transaction)), [transaction]);
 
     async function transact(transaction: number) {
-        if (!loaded) return;
+        if (!textDocument) return;
 
-        const document = documentRef.current!;
-
-        const buffer = encodeStateAsUpdateV2(document);
+        const buffer = encodeStateAsUpdateV2(textDocument);
 
         const csv = buffer.join(',');
 
@@ -67,83 +62,47 @@ export function MarkdownEditor({ pathname, root, serverContent, ice }: IMarkdown
         setTextModified(true);
     };
 
-    const loadServerContent = (ydocument: Doc) => {
-        if (!serverContent || serverContent.length === 0) {
-            return;
-        }
-
-        const buffer = new Uint8Array(serverContent);
-
-        applyUpdateV2(ydocument, buffer);
-    };
-
-    const createWebRTCProvider = (pad: string, ydocument: Doc, signaling: string, peerOptions: any) => {
-        return new WebrtcProvider(pad, ydocument, { signaling: [signaling], peerOpts: peerOptions });
-    };
-
-    const setupMonacoBinding = (editor: editor.IStandaloneCodeEditor, ydocument: Doc, provider: WebrtcProvider) => {
-        const type = ydocument.getText('monaco');
-        const model = editor.getModel()!;
-        const editors = new Set([editor]);
-        const binding = new MonacoBinding(type, model, editors, provider.awareness);
-
-        binding.doc.on('afterAllTransactions', () => setTransaction(Date.now()));
-
-        monacoRef.current = editor;
-        documentRef.current = ydocument;
-        bindingRef.current = binding;
-    };
-
-    const initializeTextDocumentWebRTC = (editor: editor.IStandaloneCodeEditor, signaling: string, peerOptions: any) => {
-        const ydocument = new Doc();
-
-        loadServerContent(ydocument);
-
-        const provider = createWebRTCProvider(pathname, ydocument, signaling, peerOptions);
-
-        provider.awareness.on('change', () => setConnections(provider.awareness.states.size || 1));
-
-        setupMonacoBinding(editor, ydocument, provider);
-
-        setTextDocument(ydocument);
-    };
-
-    const initializeFileDocumentWebRTC = (signaling: string, peerOptions: any) => {
-        const fileDocument = new Doc();
-
-        const _ = createWebRTCProvider(`${pathname}-files`, fileDocument, signaling, peerOptions);
-
-        setFileDocument(fileDocument);
-
-        fileDocumentRef.current = fileDocument;
-    };
-
-    const handleMonacoMount = async (editor: editor.IStandaloneCodeEditor, _: Monaco) => {
+    const handleMonacoMount = async (monacoEditor: editor.IStandaloneCodeEditor, _: Monaco) => {
         if (typeof window !== 'undefined') {
             const signaling = process.env.NEXT_PUBLIC_SIGNALING_SERVER!;
+            const peerOptions = ice ? { config: { iceServers: ice } } : undefined;
 
-            let peerOptions = undefined;
+            const documentBuilder = DocumentBuilder.create()
+                .withPathname(pathname)
+                .withSignaling(signaling)
+                .withPeerOptions(peerOptions)
+                .withServerContent(serverContent)
+                .withOnAwarenessChange(setConnections)
+                .withBind((doc: Doc, provider: WebrtcProvider) => {
+                    const type = doc.getText('monaco');
+                    const model = monacoEditor.getModel()!;
+                    const editors = new Set([monacoEditor]);
+                    const binding = new MonacoBinding(type, model, editors, provider.awareness);
+                    binding.doc.on('afterAllTransactions', () => setTransaction(Date.now()));
+                })
+                .build();
 
-            if (ice) {
-                peerOptions = {
-                    config: {
-                        iceServers: ice,
-                    },
-                };
-            }
+            const fileDocumentBuilder = DocumentBuilder.create()
+                .withPathname(`${pathname}-files`)
+                .withSignaling(signaling)
+                .withPeerOptions(peerOptions)
+                .build();
 
-            initializeTextDocumentWebRTC(editor, signaling, peerOptions);
-            initializeFileDocumentWebRTC(signaling, peerOptions);
+            setTextDocument(documentBuilder.getDocument()!);
+            setFileDocument(fileDocumentBuilder.getDocument()!);
 
-            // Y.js doesn't notify awareness for connection and focus... So, we need this lil hack.
-            editor.setSelection({
+            monacoRef.current = monacoEditor;
+            documentBuilderRef.current = documentBuilder;
+            fileDocumentBuilderRef.current = fileDocumentBuilder;
+
+            monacoEditor.setSelection({
                 startColumn: 1,
                 endColumn: 2,
                 startLineNumber: 1,
                 endLineNumber: 1,
             });
 
-            editor.setSelection({
+            monacoEditor.setSelection({
                 startColumn: 0,
                 endColumn: 0,
                 startLineNumber: 0,

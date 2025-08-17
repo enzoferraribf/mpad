@@ -24,13 +24,20 @@ export function FileList({ files }: IFileList) {
     };
 
     if (files.length === 0) {
-        return <div className="p-4 text-muted-foreground">No files uploaded yet. Use the Upload File command to add files.</div>;
+        return (
+            <div className="p-4 text-muted-foreground">
+                No files uploaded yet. Use the Upload File command to add files.
+            </div>
+        );
     }
 
     return (
         <div className="scrollbar-hide max-h-[36rem] overflow-y-auto">
             {files.map(file => (
-                <div key={file.id} className="mb-2 flex items-center justify-between rounded-md border border-border p-3">
+                <div
+                    key={file.id}
+                    className="mb-2 flex items-center justify-between rounded-md border border-border p-3"
+                >
                     <div className="flex min-w-0 flex-1 flex-col space-y-1">
                         <span className="truncate font-medium text-foreground">{file.name}</span>
                         <span className="text-sm text-muted-foreground">

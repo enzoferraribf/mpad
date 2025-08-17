@@ -4,7 +4,14 @@ import { useUIStore } from '@/app/stores/ui-store';
 import { useDocumentStore } from '@/app/stores/document-store';
 import { useFileStore } from '@/app/stores/file-store';
 
-import { CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/app/components/shadcn/command';
+import {
+    CommandDialog,
+    CommandEmpty,
+    CommandGroup,
+    CommandInput,
+    CommandItem,
+    CommandList,
+} from '@/app/components/shadcn/command';
 
 import { handleFileUpload } from '@/app/lib/file-upload';
 import { downloadPDF } from '@/app/lib/pdf-export';
@@ -79,7 +86,9 @@ export function CommandBar() {
                     <CommandItem onSelect={() => handlePDFExport()}>
                         <div className="command-item-spacing">
                             <h3 className="command-heading">📄 Export to PDF</h3>
-                            <span className="command-description">Export rendered markdown to PDF with current styles</span>
+                            <span className="command-description">
+                                Export rendered markdown to PDF with current styles
+                            </span>
                         </div>
                     </CommandItem>
                 </CommandGroup>

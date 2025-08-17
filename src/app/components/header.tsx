@@ -22,7 +22,11 @@ export function Header() {
                     </button>
                 </div>
 
-                <button onClick={handleHelpClick} className="absolute right-4 top-1/2 -translate-y-1/2 transform p-2 transition-opacity hover:opacity-80" aria-label="Help">
+                <button
+                    onClick={handleHelpClick}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 transform p-2 transition-opacity hover:opacity-80"
+                    aria-label="Help"
+                >
                     <HelpCircle className="h-5 w-5" />
                 </button>
             </div>

@@ -18,7 +18,8 @@ export function HelpModal({ open, onOpenChange }: IHelpModal) {
                     <div>
                         <h3 className="mb-3 text-lg font-semibold">What is Mpad?</h3>
                         <p className="text-sm text-muted-foreground">
-                            Mpad is a collaborative markdown editor with real-time previews. All changes are synced through WebRTC and persisted to ensure your documents are always available.{' '}
+                            Mpad is a collaborative markdown editor with real-time previews. All changes are synced
+                            through WebRTC and persisted to ensure your documents are always available.{' '}
                             <a
                                 href="https://github.com/enzoferraribf/mpad"
                                 target="_blank"
@@ -34,7 +35,8 @@ export function HelpModal({ open, onOpenChange }: IHelpModal) {
                     <div>
                         <h3 className="mb-3 text-lg font-semibold">Getting Started</h3>
                         <p className="mb-3 text-sm text-muted-foreground">
-                            Open the command palette by clicking on the <strong>Mpad</strong> logo in the header or use the keyboard shortcut below.
+                            Open the command palette by clicking on the <strong>Mpad</strong> logo in the header or use
+                            the keyboard shortcut below.
                         </p>
                         <div className="flex items-center gap-2">
                             <Badge variant="secondary">Ctrl + ,</Badge>
@@ -53,11 +55,15 @@ export function HelpModal({ open, onOpenChange }: IHelpModal) {
                                             <span className="text-sm">📁 Explorer</span>
                                             <Badge variant="secondary">Ctrl + .</Badge>
                                         </div>
-                                        <span className="text-xs text-muted-foreground">View file structure. Create folders by using paths like /mpad/foo</span>
+                                        <span className="text-xs text-muted-foreground">
+                                            View file structure. Create folders by using paths like /mpad/foo
+                                        </span>
                                     </div>
                                     <div className="flex items-center justify-between">
                                         <span className="text-sm">📤 Upload File</span>
-                                        <span className="text-xs text-muted-foreground">Upload files. They will only live while people are in the pad</span>
+                                        <span className="text-xs text-muted-foreground">
+                                            Upload files. They will only live while people are in the pad
+                                        </span>
                                     </div>
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-2">
@@ -68,7 +74,9 @@ export function HelpModal({ open, onOpenChange }: IHelpModal) {
                                     </div>
                                     <div className="flex items-center justify-between">
                                         <span className="text-sm">📄 Export PDF</span>
-                                        <span className="text-xs text-muted-foreground">Export current document as PDF</span>
+                                        <span className="text-xs text-muted-foreground">
+                                            Export current document as PDF
+                                        </span>
                                     </div>
                                 </div>
                             </div>
@@ -147,8 +155,12 @@ export function HelpModal({ open, onOpenChange }: IHelpModal) {
                             <div className="space-y-3">
                                 <h4 className="text-sm font-medium">Links & Images</h4>
                                 <div className="ml-4 space-y-1">
-                                    <div className="rounded bg-muted p-2 font-mono text-xs">[Link text](https://example.com)</div>
-                                    <div className="rounded bg-muted p-2 font-mono text-xs">![Image alt](image-url.jpg)</div>
+                                    <div className="rounded bg-muted p-2 font-mono text-xs">
+                                        [Link text](https://example.com)
+                                    </div>
+                                    <div className="rounded bg-muted p-2 font-mono text-xs">
+                                        ![Image alt](image-url.jpg)
+                                    </div>
                                 </div>
                             </div>
 

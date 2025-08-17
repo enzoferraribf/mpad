@@ -18,7 +18,21 @@ export default async function MainApplication({ params }: IMainApplication) {
 
     const loadingPhrase = getRandomPhrase();
 
-    const [initialContent, related, ice] = await Promise.all([initial(document), expandRoot('/' + root), getICEServers()]);
+    const [initialContent, related, ice] = await Promise.all([
+        initial(document),
+        expandRoot('/' + root),
+        getICEServers(),
+    ]);
 
-    return <ApplicationGrid pathname={document} root={root} content={initialContent.content} updated={initialContent.lastUpdate} related={related} ice={ice} loadingPhrase={loadingPhrase} />;
+    return (
+        <ApplicationGrid
+            pathname={document}
+            root={root}
+            content={initialContent.content}
+            updated={initialContent.lastUpdate}
+            related={related}
+            ice={ice}
+            loadingPhrase={loadingPhrase}
+        />
+    );
 }

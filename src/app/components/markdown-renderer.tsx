@@ -25,7 +25,14 @@ export function MarkdownRenderer({ content }: IMarkdownRenderer) {
                     const match = /language-(\w+)/.exec(className || '');
 
                     if (match) {
-                        return <SyntaxHighlighter PreTag="div" children={String(children).replace(/\n$/, '')} language={match[1]} style={resolvedTheme === 'dark' ? vscDarkPlus : oneLight} />;
+                        return (
+                            <SyntaxHighlighter
+                                PreTag="div"
+                                children={String(children).replace(/\n$/, '')}
+                                language={match[1]}
+                                style={resolvedTheme === 'dark' ? vscDarkPlus : oneLight}
+                            />
+                        );
                     }
 
                     return (

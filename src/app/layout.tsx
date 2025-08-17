@@ -34,7 +34,10 @@ export default function RootLayout({ children }: IRootLayout) {
                 <meta property="og:title" content="Mpad" />
                 <meta property="og:description" content="Share and update documents in real-time" />
 
-                <meta property="og:image" content="https://firebasestorage.googleapis.com/v0/b/missopad-e13a9.appspot.com/o/logo.png?alt=media" />
+                <meta
+                    property="og:image"
+                    content="https://firebasestorage.googleapis.com/v0/b/missopad-e13a9.appspot.com/o/logo.png?alt=media"
+                />
                 <meta property="og:image:type" content="image/png" />
                 <meta property="og:image:width" content="256" />
                 <meta property="og:image:height" content="256" />

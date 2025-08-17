@@ -20,7 +20,8 @@ const config = {
                 mono: ['var(--font-geist-mono)', 'monospace'],
             },
             backgroundImage: {
-                'brand-gradient': 'linear-gradient(to right, theme(colors.purple.600), theme(colors.sky.600), theme(colors.blue.600))',
+                'brand-gradient':
+                    'linear-gradient(to right, theme(colors.purple.600), theme(colors.sky.600), theme(colors.blue.600))',
             },
             colors: {
                 border: 'hsl(var(--border))',
