@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 
 import { useUIStore } from '@/app/stores/ui-store';
 import { useDrawingStore } from '@/app/stores/drawing-store';
+import { isValidExcalidrawUrl } from '@/lib/excalidraw-validator';
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/app/components/shadcn/dialog';
 import { Button } from '@/app/components/shadcn/button';
@@ -15,21 +16,31 @@ export function Excalidraw() {
 
     const [drawingName, setDrawingName] = useState('');
     const [drawingUrl, setDrawingUrl] = useState('');
+    const [inputUrl, setInputUrl] = useState('');
 
     const selectedDrawing = getSelectedDrawing();
 
     useEffect(() => {
         if (selectedDrawing) {
             setDrawingName(selectedDrawing.name);
-            setDrawingUrl('');
+            setDrawingUrl(selectedDrawing.url);
+            setInputUrl('');
         }
     }, [selectedDrawing]);
 
     const handleSave = () => {
-        if (drawingName.trim() && drawingUrl.trim()) {
-            addDrawing(drawingName.trim(), drawingUrl.trim());
+        const urlToSave = inputUrl.trim() || drawingUrl.trim();
+        if (drawingName.trim() && urlToSave) {
+            if (!isValidExcalidrawUrl(urlToSave)) {
+                toast.error("That's not the correct link!");
+                return;
+            }
+
+            addDrawing(drawingName.trim(), urlToSave);
             setDrawingName('');
             setDrawingUrl('');
+            setInputUrl('');
+
             toast.success('Saved excalidraw', {
                 description: `Excalidraw: ${drawingName.trim()}`,
             });
@@ -59,13 +70,13 @@ export function Excalidraw() {
                         <input
                             type="url"
                             placeholder="Excalidraw shareable link"
-                            value={drawingUrl}
-                            onChange={e => setDrawingUrl(e.target.value)}
+                            value={inputUrl}
+                            onChange={e => setInputUrl(e.target.value)}
                             className="flex-1 rounded-md border border-border px-3 py-2 text-sm"
                         />
                         <Button
                             onClick={handleSave}
-                            disabled={!drawingName.trim() || !drawingUrl.trim()}
+                            disabled={!drawingName.trim() || (!inputUrl.trim() && !drawingUrl.trim())}
                             variant="secondary"
                         >
                             Save
