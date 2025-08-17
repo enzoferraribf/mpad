@@ -10,6 +10,7 @@ import { WebrtcProvider } from 'y-webrtc';
 import { toast } from 'sonner';
 
 import { useDocumentStore } from '@/app/stores/document-store';
+import { useDrawingStore } from '@/app/stores/drawing-store';
 import { useConnectionStore } from '@/app/stores/connection-store';
 import { useFileStore } from '@/app/stores/file-store';
 
@@ -29,6 +30,8 @@ export function MarkdownEditor({ pathname, root, serverContent, ice }: IMarkdown
     const { resolvedTheme } = useTheme();
 
     const { textDocument, setTextDocument, setTextModified, setTextUpdated } = useDocumentStore();
+
+    const { setDrawingDocument } = useDrawingStore();
 
     const { transaction, setConnections, setTransaction } = useConnectionStore();
 
@@ -99,6 +102,7 @@ export function MarkdownEditor({ pathname, root, serverContent, ice }: IMarkdown
 
             setTextDocument(documentBuilder.getDocument()!);
             setFileDocument(fileDocumentBuilder.getDocument()!);
+            setDrawingDocument(documentBuilder.getDocument()!);
 
             monacoRef.current = monacoEditor;
             documentBuilderRef.current = documentBuilder;

@@ -49,66 +49,94 @@ export function Help({ open, onOpenChange }: IHelp) {
                         <div className="space-y-4">
                             <div className="space-y-3">
                                 <h4 className="text-sm font-medium">Files</h4>
-                                <div className="ml-4 space-y-2">
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-2">
+                                <div className="ml-4 space-y-4">
+                                    <div>
+                                        <div className="mb-1 flex items-center gap-2">
                                             <span className="text-sm">📁 Explorer</span>
                                             <Badge variant="secondary">Ctrl + .</Badge>
                                         </div>
-                                        <span className="text-xs text-muted-foreground">
-                                            View file structure. Create folders by using paths like /mpad/foo
-                                        </span>
+                                        <p className="text-xs text-muted-foreground">
+                                            View file structure. Create folders by using nested paths like /mpad/foo, or
+                                            /mpad/foo/baz
+                                        </p>
                                     </div>
-                                    <div className="flex items-center justify-between">
-                                        <span className="text-sm">📤 Upload File</span>
-                                        <span className="text-xs text-muted-foreground">
+                                    <div>
+                                        <div className="mb-1 text-sm">📤 Upload File</div>
+                                        <p className="text-xs text-muted-foreground">
                                             Upload files. They will only live while people are in the pad
-                                        </span>
+                                        </p>
                                     </div>
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-2">
-                                            <span className="text-sm">🗄️ Storage</span>
+                                    <div>
+                                        <div className="mb-1 flex items-center gap-2">
+                                            <span className="text-sm">🗄️ Show Files</span>
                                             <Badge variant="secondary">Ctrl + ;</Badge>
                                         </div>
-                                        <span className="text-xs text-muted-foreground">View uploaded files</span>
+                                        <p className="text-xs text-muted-foreground">
+                                            View uploaded files ready to transfer
+                                        </p>
                                     </div>
-                                    <div className="flex items-center justify-between">
-                                        <span className="text-sm">📄 Export PDF</span>
-                                        <span className="text-xs text-muted-foreground">
-                                            Export current document as PDF
-                                        </span>
+                                    <div>
+                                        <div className="mb-1 text-sm">📄 Export PDF</div>
+                                        <p className="text-xs text-muted-foreground">Export the current pad as PDF</p>
                                     </div>
                                 </div>
                             </div>
 
                             <div className="space-y-3">
                                 <h4 className="text-sm font-medium">Layout</h4>
-                                <div className="ml-4 space-y-2">
-                                    <div className="flex items-center justify-between">
-                                        <span className="text-sm">✏️ Editor</span>
-                                        <span className="text-xs text-muted-foreground">Edit-only view</span>
+                                <div className="ml-4 space-y-4">
+                                    <div>
+                                        <div className="mb-1 text-sm">✏️ Editor</div>
+                                        <p className="text-xs text-muted-foreground">Edit-only view</p>
                                     </div>
-                                    <div className="flex items-center justify-between">
-                                        <span className="text-sm">📄 Preview</span>
-                                        <span className="text-xs text-muted-foreground">Preview-only view</span>
+                                    <div>
+                                        <div className="mb-1 text-sm">📄 Preview</div>
+                                        <p className="text-xs text-muted-foreground">Preview-only view</p>
                                     </div>
-                                    <div className="flex items-center justify-between">
-                                        <span className="text-sm">✏️📄 Editor+Preview</span>
-                                        <span className="text-xs text-muted-foreground">Default split view</span>
+                                    <div>
+                                        <div className="mb-1 text-sm">✏️📄 Editor+Preview</div>
+                                        <p className="text-xs text-muted-foreground">Default split view</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="space-y-3">
+                                <h4 className="text-sm font-medium">Drawings</h4>
+                                <div className="ml-4 space-y-4">
+                                    <div>
+                                        <div className="mb-1 text-sm">🎨 Excalidraw</div>
+                                        <p className="text-xs text-muted-foreground">
+                                            Open drawing canvas with Excalidraw.
+                                        </p>
+
+                                        <p className="mt-2 text-xs text-muted-foreground">
+                                            <span className="font-bold">Note:</span> to save a excalidraw:
+                                            <ul className="mt-2 space-y-2">
+                                                <li>1st: Open the excalidraw menu</li>
+                                                <li>2nd: "Save to" and choose link</li>
+                                                <li>3rd: Paste the link on the top input and hit save!</li>
+                                            </ul>
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <div className="mb-1 text-sm">🖼️ Show Excalidraws</div>
+                                        <p className="text-xs text-muted-foreground">
+                                            View and open saved Excalidraw drawings
+                                        </p>
                                     </div>
                                 </div>
                             </div>
 
                             <div className="space-y-3">
                                 <h4 className="text-sm font-medium">Themes</h4>
-                                <div className="ml-4 space-y-2">
-                                    <div className="flex items-center justify-between">
-                                        <span className="text-sm">🌙 Dark</span>
-                                        <span className="text-xs text-muted-foreground">Switch to dark mode</span>
+                                <div className="ml-4 space-y-4">
+                                    <div>
+                                        <div className="mb-1 text-sm">🌙 Dark</div>
+                                        <p className="text-xs text-muted-foreground">Switch to dark mode</p>
                                     </div>
-                                    <div className="flex items-center justify-between">
-                                        <span className="text-sm">☀️ Light</span>
-                                        <span className="text-xs text-muted-foreground">Switch to light mode</span>
+                                    <div>
+                                        <div className="mb-1 text-sm">☀️ Light</div>
+                                        <p className="text-xs text-muted-foreground">Switch to light mode</p>
                                     </div>
                                 </div>
                             </div>

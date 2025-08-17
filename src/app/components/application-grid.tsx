@@ -15,6 +15,8 @@ import { StatusBar } from '@/app/components/status-bar';
 import { CommandBar } from '@/app/components/command-bar';
 import { Explorer } from '@/app/components/explorer';
 import { Storage } from '@/app/components/storage';
+import { Excalidraw } from '@/app/components/excalidraw';
+import { ExcalidrawList } from '@/app/components/excalidraw-list';
 import { LoadingPhrases } from '@/app/components/loading-phrases';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/app/components/shadcn/resizable';
 
@@ -103,6 +105,10 @@ export default function ApplicationGrid({
             <Explorer related={related} />
 
             <Storage />
+
+            <Excalidraw />
+
+            <ExcalidrawList />
         </main>
     );
 }

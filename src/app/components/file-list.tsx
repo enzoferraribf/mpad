@@ -34,7 +34,7 @@ export function FileList({ files }: IFileList) {
             {files.map(file => (
                 <div
                     key={file.id}
-                    className="mb-2 flex items-center justify-between rounded-md border border-border p-3"
+                    className="mb-3 flex items-center justify-between rounded-md border border-border p-3"
                 >
                     <div className="flex min-w-0 flex-1 flex-col space-y-1">
                         <span className="truncate font-medium text-foreground">{file.name}</span>

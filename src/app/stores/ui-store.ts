@@ -8,6 +8,8 @@ interface UIState {
     command: boolean;
     help: boolean;
     storage: boolean;
+    excalidraw: boolean;
+    drawings: boolean;
 }
 
 interface UIActions {
@@ -16,6 +18,8 @@ interface UIActions {
     setCommand: (command: boolean) => void;
     setHelp: (help: boolean) => void;
     setStorage: (storage: boolean) => void;
+    setExcalidraw: (excalidraw: boolean) => void;
+    setDrawings: (drawings: boolean) => void;
 }
 
 export const useUIStore = create<UIState & UIActions>(set => ({
@@ -24,10 +28,14 @@ export const useUIStore = create<UIState & UIActions>(set => ({
     command: false,
     help: false,
     storage: false,
+    excalidraw: false,
+    drawings: false,
 
     setLayout: layout => set({ layout }),
     setExplorer: explorer => set({ explorer }),
     setCommand: command => set({ command }),
     setHelp: help => set({ help }),
     setStorage: storage => set({ storage }),
+    setExcalidraw: excalidraw => set({ excalidraw }),
+    setDrawings: drawings => set({ drawings }),
 }));

@@ -19,7 +19,7 @@ import { downloadPDF } from '@/app/lib/pdf-export';
 export function CommandBar() {
     const { setTheme, resolvedTheme } = useTheme();
 
-    const { command, setCommand, setExplorer, setStorage, setLayout } = useUIStore();
+    const { command, setCommand, setExplorer, setStorage, setLayout, setExcalidraw, setDrawings } = useUIStore();
 
     const { getTextContent } = useDocumentStore();
 
@@ -56,6 +56,16 @@ export function CommandBar() {
         setCommand(false);
     };
 
+    const handleExcalidraw = () => {
+        setExcalidraw(true);
+        setCommand(false);
+    };
+
+    const handleDrawings = () => {
+        setDrawings(true);
+        setCommand(false);
+    };
+
     return (
         <CommandDialog open={command} onOpenChange={setCommand}>
             <CommandInput placeholder="Type a command or search..." />
@@ -80,7 +90,7 @@ export function CommandBar() {
 
                     <CommandItem onSelect={() => handleStorage()}>
                         <div className="command-item-spacing">
-                            <h3 className="command-heading">🗄️ Storage</h3>
+                            <h3 className="command-heading">🗄️ Show Files</h3>
                             <span className="command-description">View uploaded files in this pad</span>
                         </div>
                     </CommandItem>
@@ -91,6 +101,22 @@ export function CommandBar() {
                             <span className="command-description">
                                 Export rendered markdown to PDF with current styles
                             </span>
+                        </div>
+                    </CommandItem>
+                </CommandGroup>
+
+                <CommandGroup heading="Drawings">
+                    <CommandItem onSelect={() => handleExcalidraw()}>
+                        <div className="command-item-spacing">
+                            <h3 className="command-heading">🎨 Excalidraw</h3>
+                            <span className="command-description">Open drawing canvas with Excalidraw</span>
+                        </div>
+                    </CommandItem>
+
+                    <CommandItem onSelect={() => handleDrawings()}>
+                        <div className="command-item-spacing">
+                            <h3 className="command-heading">🖼️ Show Excalidraws</h3>
+                            <span className="command-description">View and open saved Excalidraw drawings</span>
                         </div>
                     </CommandItem>
                 </CommandGroup>
@@ -112,7 +138,7 @@ export function CommandBar() {
 
                     <CommandItem onSelect={() => handleLayoutChange('default')}>
                         <div className="command-item-spacing">
-                            <h3 className="command-heading">✏️📄 Editor+Preview</h3>
+                            <h3 className="command-heading">✏️ 📄 Editor + Preview</h3>
                             <span className="command-description">Changes the Mpad view to default.</span>
                         </div>
                     </CommandItem>
