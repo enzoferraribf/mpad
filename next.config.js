@@ -11,7 +11,7 @@ const nextConfig = {
         if (isServer) {
             config.externals = config.externals || [];
             config.externals.push({
-                yjs: 'commonjs yjs'
+                yjs: 'commonjs yjs',
             });
         }
 
@@ -38,7 +38,7 @@ const nextConfig = {
 
         return config;
     },
-    
+
     // Disable webpack cache to ensure clean builds
     experimental: {
         webpackBuildWorker: false,
