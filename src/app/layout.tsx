@@ -38,7 +38,6 @@ export default function RootLayout({ children }: IRootLayout) {
                 <meta property="og:image:type" content="image/png" />
                 <meta property="og:image:width" content="256" />
                 <meta property="og:image:height" content="256" />
-
             </head>
 
             <body className={`${geistSans.className} ${geistMono.variable}`}>

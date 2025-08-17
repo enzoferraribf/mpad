@@ -1,55 +1,54 @@
-import { useContext } from 'react';
-
 import { useTheme } from 'next-themes';
 
-import { ApplicationContext } from '@/app/context/context';
+import { useUIStore } from '@/app/stores/ui-store';
+import { useDocumentStore } from '@/app/stores/document-store';
+import { useFileStore } from '@/app/stores/file-store';
 
 import { CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/app/components/shadcn/command';
 
-import { useFileUpload } from '@/app/hooks/use-file-upload';
-
+import { handleFileUpload } from '@/app/lib/file-upload';
 import { downloadPDF } from '@/app/lib/pdf-export';
 
 export function CommandBar() {
-    const { context, setContext } = useContext(ApplicationContext);
+    const { command, setCommand, setExplorer, setStorage, setLayout } = useUIStore();
+    const { getTextContent } = useDocumentStore();
+    const content = getTextContent();
+
+    const { fileDocument } = useFileStore();
 
     const { setTheme, resolvedTheme } = useTheme();
 
-    const { handleFileUpload } = useFileUpload();
-
     const handleFiles = () => {
-        setContext({ explorer: true, command: !context.command });
+        setExplorer(true);
+        setCommand(false);
     };
 
     const handleStorage = () => {
-        setContext({ storage: true, command: !context.command });
+        setStorage(true);
+        setCommand(false);
     };
 
     const handleUploadCommand = () => {
-        handleFileUpload();
-        setContext({ command: !context.command });
+        handleFileUpload(fileDocument);
+        setCommand(false);
     };
 
     const handlePDFExport = async () => {
-        setContext({ loadingPDFGeneration: true });
-        try {
-            await downloadPDF(context.content, resolvedTheme);
-        } finally {
-            setContext({ loadingPDFGeneration: false });
-        }
+        await downloadPDF(content, resolvedTheme);
     };
 
-    const handleLayout = (layout: 'editor' | 'preview' | 'default') => {
-        setContext({ layout, command: !context.command });
+    const handleLayoutChange = (layout: 'editor' | 'preview' | 'default') => {
+        setLayout(layout);
+        setCommand(false);
     };
 
     const handleTheme = (theme: 'light' | 'dark') => {
         setTheme(theme);
-        setContext({ command: !context.command });
+        setCommand(false);
     };
 
     return (
-        <CommandDialog open={context.command} onOpenChange={open => setContext({ command: open })}>
+        <CommandDialog open={command} onOpenChange={setCommand}>
             <CommandInput placeholder="Type a command or search..." />
 
             <CommandList>
@@ -79,28 +78,28 @@ export function CommandBar() {
 
                     <CommandItem onSelect={() => handlePDFExport()}>
                         <div className="command-item-spacing">
-                            <h3 className="command-heading">{context.loadingPDFGeneration ? '⏳' : '📄'} Export to PDF</h3>
-                            <span className="command-description">{context.loadingPDFGeneration ? 'Generating PDF...' : 'Export rendered markdown to PDF with current styles'}</span>
+                            <h3 className="command-heading">📄 Export to PDF</h3>
+                            <span className="command-description">Export rendered markdown to PDF with current styles</span>
                         </div>
                     </CommandItem>
                 </CommandGroup>
 
                 <CommandGroup heading="Layout">
-                    <CommandItem onSelect={() => handleLayout('editor')}>
+                    <CommandItem onSelect={() => handleLayoutChange('editor')}>
                         <div className="command-item-spacing">
                             <h3 className="command-heading">✏️ Editor</h3>
                             <span className="command-description">Changes the Mpad view to edit-only.</span>
                         </div>
                     </CommandItem>
 
-                    <CommandItem onSelect={() => handleLayout('preview')}>
+                    <CommandItem onSelect={() => handleLayoutChange('preview')}>
                         <div className="command-item-spacing">
                             <h3 className="command-heading">📄 Preview</h3>
                             <span className="command-description">Changes the Mpad view to preview-only.</span>
                         </div>
                     </CommandItem>
 
-                    <CommandItem onSelect={() => handleLayout('default')}>
+                    <CommandItem onSelect={() => handleLayoutChange('default')}>
                         <div className="command-item-spacing">
                             <h3 className="command-heading">✏️📄 Editor+Preview</h3>
                             <span className="command-description">Changes the Mpad view to default.</span>

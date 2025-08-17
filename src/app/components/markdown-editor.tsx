@@ -1,4 +1,4 @@
-import { useEffect, useRef, useContext } from 'react';
+import { useEffect, useRef } from 'react';
 
 import { useTheme } from 'next-themes';
 
@@ -10,9 +10,9 @@ import { WebrtcProvider } from 'y-webrtc';
 
 import { write } from '@/app/actions/pad';
 
-import { ApplicationContext } from '@/app/context/context';
-
-import { useFileSync } from '@/app/hooks/use-file-sync';
+import { useDocumentStore } from '@/app/stores/document-store';
+import { useConnectionStore } from '@/app/stores/connection-store';
+import { useFileStore } from '@/app/stores/file-store';
 
 import { debounce } from '@/app/lib/debounce';
 import { handleServerDateTime } from '@/app/lib/datetime';
@@ -27,23 +27,27 @@ export function MarkdownEditor({ pathname, root, serverContent, ice }: IMarkdown
 
     const { resolvedTheme } = useTheme();
 
-    const { context, setContext } = useContext(ApplicationContext);
+    const { getTextLoaded, setTextDocument, setTextModified, setTextUpdated } = useDocumentStore();
 
-    useFileSync(pathname);
+    const { transaction, setConnections, setTransaction } = useConnectionStore();
+
+    const { setFileDocument } = useFileStore();
+
+    const loaded = getTextLoaded();
 
     useEffect(() => {
         return () => {
             bindingRef.current?.destroy();
             documentRef.current?.destroy();
-            monacoRef.current?.dispose();
             fileDocumentRef.current?.destroy();
+            monacoRef.current?.dispose();
         };
     }, []);
 
-    useEffect(() => debounce(500, async () => transact(context.transaction)), [context.transaction]);
+    useEffect(() => debounce(500, async () => transact(transaction)), [transaction]);
 
     async function transact(transaction: number) {
-        if (!context.loaded) return;
+        if (!loaded) return;
 
         const document = documentRef.current!;
 
@@ -53,11 +57,14 @@ export function MarkdownEditor({ pathname, root, serverContent, ice }: IMarkdown
 
         const lastUpdated = await write(root, pathname, csv, transaction);
 
-        if (lastUpdated) setContext({ updated: handleServerDateTime(lastUpdated), modified: false });
+        if (lastUpdated) {
+            setTextUpdated(handleServerDateTime(lastUpdated));
+            setTextModified(false);
+        }
     }
 
-    const handleModification = (text: string | undefined) => {
-        setContext({ content: text || '', modified: true });
+    const handleModification = (_: string | undefined) => {
+        setTextModified(true);
     };
 
     const loadServerContent = (ydocument: Doc) => {
@@ -68,10 +75,6 @@ export function MarkdownEditor({ pathname, root, serverContent, ice }: IMarkdown
         const buffer = new Uint8Array(serverContent);
 
         applyUpdateV2(ydocument, buffer);
-
-        const documentText = ydocument.getText('monaco').toString();
-
-        setContext({ content: documentText });
     };
 
     const createWebRTCProvider = (pad: string, ydocument: Doc, signaling: string, peerOptions: any) => {
@@ -84,7 +87,7 @@ export function MarkdownEditor({ pathname, root, serverContent, ice }: IMarkdown
         const editors = new Set([editor]);
         const binding = new MonacoBinding(type, model, editors, provider.awareness);
 
-        binding.doc.on('afterAllTransactions', () => setContext({ transaction: Date.now() }));
+        binding.doc.on('afterAllTransactions', () => setTransaction(Date.now()));
 
         monacoRef.current = editor;
         documentRef.current = ydocument;
@@ -98,9 +101,11 @@ export function MarkdownEditor({ pathname, root, serverContent, ice }: IMarkdown
 
         const provider = createWebRTCProvider(pathname, ydocument, signaling, peerOptions);
 
-        provider.awareness.on('change', () => setContext({ connections: provider.awareness.states.size || 1 }));
+        provider.awareness.on('change', () => setConnections(provider.awareness.states.size || 1));
 
         setupMonacoBinding(editor, ydocument, provider);
+
+        setTextDocument(ydocument);
     };
 
     const initializeFileDocumentWebRTC = (signaling: string, peerOptions: any) => {
@@ -108,7 +113,7 @@ export function MarkdownEditor({ pathname, root, serverContent, ice }: IMarkdown
 
         const _ = createWebRTCProvider(`${pathname}-files`, fileDocument, signaling, peerOptions);
 
-        setContext({ fileDocument });
+        setFileDocument(fileDocument);
 
         fileDocumentRef.current = fileDocument;
     };
@@ -144,8 +149,6 @@ export function MarkdownEditor({ pathname, root, serverContent, ice }: IMarkdown
                 startLineNumber: 0,
                 endLineNumber: 0,
             });
-
-            setContext({ loaded: true });
         }
     };
 

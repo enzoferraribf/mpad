@@ -37,8 +37,7 @@ beyond the text.
 
 /app/actions → server commands
 /components/ → React components (manual or ShadCN)
-/context/ → global state handling
-/hooks/ → local component state hooks
+/stores/ → global state handling
 /lib/ → utilities
 /models/ → types (frontend + backend)
 
@@ -53,8 +52,7 @@ beyond the text.
 - Never output console logs.
 - No inline styles, always use Tailwind/ShadCN.
 - Keep data flow clear:
-- `/context/` for shared state
-- `/hooks/` for local component logic
+- `/stores/` for shared state
 - `/lib/` for utilities
 - `/models/` for types
 
@@ -68,6 +66,6 @@ beyond the text.
 - No comments in code
 - No unused imports
 - No console logs
-- No business logic inside components (move to `/lib/` or `/hooks/`)
+- No business logic inside components (move to `/lib/`)
 - No large “God components” (split into smaller ones)
 - No global mutable variables

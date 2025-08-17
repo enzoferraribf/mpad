@@ -20,6 +20,7 @@
         "@vercel/analytics": "^1.4.1",
         "@vercel/kv": "^3.0.0",
         "@vercel/speed-insights": "^1.1.0",
+        "caniuse-lite": "^1.0.30001735",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
         "cmdk": "^1.0.4",
@@ -45,7 +46,8 @@
         "tailwindcss-animate": "^1.0.7",
         "y-monaco": "^0.1.6",
         "y-webrtc": "^10.3.0",
-        "yjs": "^13.6.20"
+        "yjs": "^13.6.20",
+        "zustand": "^5.0.7"
     },
     "devDependencies": {
         "@types/lodash": "^4.17.13",

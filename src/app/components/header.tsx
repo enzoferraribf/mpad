@@ -1,24 +1,23 @@
 'use client';
 
-import { useContext } from 'react';
 import { HelpCircle } from 'lucide-react';
 
-import { ApplicationContext } from '@/app/context/context';
+import { useUIStore } from '@/app/stores/ui-store';
 import { HelpModal } from '@/app/components/help-modal';
 
 export function Header() {
-    const { context, setContext } = useContext(ApplicationContext);
+    const { command, help, setCommand, setHelp } = useUIStore();
 
     const handleHelpClick = (e: React.MouseEvent) => {
         e.stopPropagation();
-        setContext({ help: true });
+        setHelp(true);
     };
 
     return (
         <>
             <div className="fill-container surface-secondary section-padding relative">
                 <div className="flex justify-center">
-                    <button onClick={() => setContext({ command: !context.command })} className="transition-opacity hover:opacity-80">
+                    <button onClick={() => setCommand(!command)} className="transition-opacity hover:opacity-80">
                         <h2 className="brand-subtitle">Mpad</h2>
                     </button>
                 </div>
@@ -28,7 +27,7 @@ export function Header() {
                 </button>
             </div>
 
-            <HelpModal open={context.help} onOpenChange={open => setContext({ help: open })} />
+            <HelpModal open={help} onOpenChange={setHelp} />
         </>
     );
 }

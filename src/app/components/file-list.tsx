@@ -1,6 +1,4 @@
-import { useContext } from 'react';
-
-import { ApplicationContext } from '@/app/context/context';
+import { useFileStore } from '@/app/stores/file-store';
 
 import { Button } from '@/app/components/shadcn/button';
 
@@ -11,7 +9,7 @@ import { formatUploadDate } from '@/app/lib/datetime';
 import { IFileList, IEphemeralFile } from '@/app/models/files';
 
 export function FileList({ files }: IFileList) {
-    const { context } = useContext(ApplicationContext);
+    const { fileDocument } = useFileStore();
 
     const handleDownload = (file: IEphemeralFile) => {
         const link = document.createElement('a');
@@ -21,8 +19,8 @@ export function FileList({ files }: IFileList) {
     };
 
     const handleDelete = (id: string) => {
-        if (!context.fileDocument) return;
-        removeFile(context.fileDocument, id);
+        if (!fileDocument) return;
+        removeFile(fileDocument, id);
     };
 
     if (files.length === 0) {

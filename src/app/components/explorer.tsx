@@ -1,8 +1,6 @@
-import { useContext } from 'react';
-
 import { useRouter } from 'next/navigation';
 
-import { ApplicationContext } from '@/app/context/context';
+import { useUIStore } from '@/app/stores/ui-store';
 
 import { Badge } from '@/app/components/shadcn/badge';
 import { CommandDialog, CommandGroup, CommandInput, CommandItem } from '@/app/components/shadcn/command';
@@ -10,12 +8,12 @@ import { CommandDialog, CommandGroup, CommandInput, CommandItem } from '@/app/co
 export function Explorer({ related }: { related: string[] }) {
     const { push } = useRouter();
 
-    const { context, setContext } = useContext(ApplicationContext);
+    const { explorer, setExplorer } = useUIStore();
 
     const handleNavigation = (pad: string) => push(pad);
 
     return (
-        <CommandDialog open={context.explorer} onOpenChange={open => setContext({ explorer: open })}>
+        <CommandDialog open={explorer} onOpenChange={setExplorer}>
             <CommandInput placeholder="Search for a Pad..." />
 
             <CommandGroup heading="Pads">
