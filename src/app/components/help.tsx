@@ -113,7 +113,7 @@ export function Help({ open, onOpenChange }: IHelp) {
                                             <span className="font-bold">Note:</span> to save a excalidraw:
                                             <ul className="mt-2 space-y-2">
                                                 <li>1st: Open the excalidraw menu</li>
-                                                <li>2nd: "Save to" and choose link</li>
+                                                <li>2nd: &quot;Save to&quot; and choose link</li>
                                                 <li>3rd: Paste the link on the top input and hit save!</li>
                                             </ul>
                                         </p>
