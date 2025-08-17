@@ -1,10 +1,11 @@
 import dynamic from 'next/dynamic';
-import { toast } from 'sonner';
 
 import { initial, expandRoot } from '@/app/actions/pad';
 import { getICEServers } from '@/app/actions/web-rtc';
 
 import { getRandomPhrase } from '@/app/components/loading-phrases';
+
+import { handleInitialResponse, handleRelatedResponse, handleICEResponse } from '@/app/lib/server-response-handlers';
 
 import { IMainApplication } from '@/app/models/main-application';
 
@@ -19,37 +20,18 @@ export default async function MainApplication({ params }: IMainApplication) {
 
     const loadingPhrase = getRandomPhrase();
 
-    const [initialx, relatedx, ice] = await Promise.all([initial(document), expandRoot('/' + root), getICEServers()]);
+    const [initialx, relatedx, icex] = await Promise.all([initial(document), expandRoot('/' + root), getICEServers()]);
 
-    if (initialx.error) {
-        toast.error('Error when fetching pad', { description: initialx.error });
-    }
-
-    let serverContent = null;
-    let serverLastUpdate = null;
-
-    if (initialx.result) {
-        const { content, lastUpdate } = initialx.result;
-        serverContent = content;
-        serverLastUpdate = lastUpdate;
-    }
-
-    if (relatedx.error) {
-        toast.error('Error fetching related pads', { description: relatedx.error });
-    }
-
-    let related: string[] = [];
-
-    if (relatedx.result) {
-        related = relatedx.result;
-    }
+    const initialr = handleInitialResponse(initialx);
+    const related = handleRelatedResponse(relatedx);
+    const ice = handleICEResponse(icex);
 
     return (
         <ApplicationGrid
             pathname={document}
             root={root}
-            content={serverContent}
-            updated={serverLastUpdate}
+            content={initialr.serverContent}
+            updated={initialr.serverLastUpdate}
             related={related}
             ice={ice}
             loadingPhrase={loadingPhrase}
