@@ -7,6 +7,7 @@ import Editor, { Monaco } from '@monaco-editor/react';
 import { Doc } from 'yjs';
 import { MonacoBinding } from 'y-monaco';
 import { WebrtcProvider } from 'y-webrtc';
+import { toast } from 'sonner';
 
 import { useDocumentStore } from '@/app/stores/document-store';
 import { useConnectionStore } from '@/app/stores/connection-store';
@@ -53,6 +54,11 @@ export function MarkdownEditor({ pathname, root, serverContent, ice }: IMarkdown
                 .withOnSuccess((timestamp: number) => {
                     setTextUpdated(handleServerDateTime(timestamp));
                     setTextModified(false);
+                })
+                .withOnError((error: string) => {
+                    toast.error('Error persiting the pad', {
+                        description: error,
+                    });
                 })
                 .execute();
         },
