@@ -7,19 +7,8 @@ import { eq } from 'drizzle-orm';
 import { IPadSnapshot } from '@/app/models/pad';
 import { createDatabase, pads } from '@/app/lib/db';
 
-function bufferize(data: string): number[] {
-    if (!data) {
-        return [];
-    }
-
-    return data
-        .split(',')
-        .map(char => parseInt(char, 10))
-        .filter(num => !isNaN(num));
-}
-
 export async function initial(document: string): Promise<IPadSnapshot> {
-    const preventCaching = cookies();
+    const _ = cookies();
 
     const database = createDatabase();
 
@@ -37,6 +26,7 @@ export async function initial(document: string): Promise<IPadSnapshot> {
     }
 
     let buffer = null;
+
     if (pad.content) {
         buffer = bufferize(pad.content);
     }
@@ -48,7 +38,7 @@ export async function initial(document: string): Promise<IPadSnapshot> {
 }
 
 export async function lastUpdate(document: string): Promise<number | null> {
-    const preventCaching = cookies();
+    const _ = cookies();
 
     const database = createDatabase();
 
@@ -67,17 +57,28 @@ export async function lastUpdate(document: string): Promise<number | null> {
     return pad.lastUpdate;
 }
 
-export async function write(root: string, document: string, data: string, transaction: number) {
-    const serverSnapshot = await initial(document);
+export async function write(root: string, document: string, data: Uint8Array<ArrayBufferLike>, transaction: number) {
+    const { content: serverContent, lastUpdate: serverLastUpdate } = await initial(document);
 
-    const mergedContent = prepareMergedContent(data, serverSnapshot.content);
+    let buffer = data;
+
+    if (serverContent && serverContent.length > 0) {
+        buffer = prepareMergedContent(data, serverContent);
+    }
+
+    // We accept a maximum of 100kB file
+    if (buffer.byteLength > 100000) {
+        return null;
+    }
+
+    const mergedContent = stringifyBuffer(buffer);
 
     const updateTimestamp = Date.now();
     const normalizedRoot = '/' + root;
 
     const database = createDatabase();
 
-    const conflictCondition = buildConflictCondition(serverSnapshot.lastUpdate);
+    const conflictCondition = buildConflictCondition(serverLastUpdate);
 
     const result = await database
         .insert(pads)
@@ -109,7 +110,7 @@ export async function write(root: string, document: string, data: string, transa
 }
 
 export async function expandRoot(root: string): Promise<string[]> {
-    const preventCaching = cookies();
+    const _ = cookies();
 
     const database = createDatabase();
 
@@ -123,16 +124,29 @@ export async function expandRoot(root: string): Promise<string[]> {
     return result.map(({ id }) => id);
 }
 
-function prepareMergedContent(clientData: string, serverContent: number[] | null): string {
-    if (!serverContent || serverContent.length === 0) {
-        return clientData;
+function bufferize(data: string): number[] {
+    if (!data) {
+        return [];
     }
 
-    const serverBuffer = new Uint8Array(Array.from(serverContent));
-    const clientBuffer = new Uint8Array(Array.from(bufferize(clientData)));
-    const mergedBuffer = mergeUpdatesV2([serverBuffer, clientBuffer]);
+    return data
+        .split(',')
+        .map(char => parseInt(char, 10))
+        .filter(num => !isNaN(num));
+}
 
+function stringifyBuffer(mergedBuffer: Uint8Array<ArrayBufferLike>): string {
     return mergedBuffer.join(',');
+}
+
+function prepareMergedContent(
+    clientData: Uint8Array<ArrayBufferLike>,
+    serverContent: number[],
+): Uint8Array<ArrayBufferLike> {
+    const serverBuffer = new Uint8Array(Array.from(serverContent));
+    const clientBuffer = new Uint8Array(Array.from(clientData));
+
+    return mergeUpdatesV2([serverBuffer, clientBuffer]);
 }
 
 function buildConflictCondition(serverLastUpdate: number | null) {

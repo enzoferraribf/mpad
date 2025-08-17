@@ -49,7 +49,6 @@ export function MarkdownEditor({ pathname, root, serverContent, ice }: IMarkdown
                 .withDocument(textDocument)
                 .withRoot(root)
                 .withPathname(pathname)
-                .withMaxDocumentSize(15000)
                 .withTransactionId(transactionId)
                 .withOnSuccess((timestamp: number) => {
                     setTextUpdated(handleServerDateTime(timestamp));
