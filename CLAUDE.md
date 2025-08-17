@@ -55,6 +55,7 @@ beyond the text.
 - `/stores/` for shared state
 - `/lib/` for utilities
 - `/models/` for types
+- '/builders/' for handling complex creation logic
 
 ---
 
