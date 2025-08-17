@@ -74,7 +74,7 @@ export function CommandBar() {
                     <CommandItem onSelect={() => handleUploadCommand()}>
                         <div className="command-item-spacing">
                             <h3 className="command-heading">📤 Upload File</h3>
-                            <span className="command-description">Upload files to this pad (max 5MB, 5 files)</span>
+                            <span className="command-description">Upload files to this pad (max 1MB, 5 files)</span>
                         </div>
                     </CommandItem>
 

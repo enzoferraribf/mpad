@@ -17,7 +17,7 @@ export const handleFileUpload = (fileDocument: Doc | null) => {
     FileUploadBuilder.create()
         .withFileDocument(fileDocument)
         .withMultiple(true)
-        .withValidation((file: File) => file.size <= 5 * 1024 * 1024, 'File is larger than 5MB limit')
+        .withValidation((file: File) => file.size <= 1 * 1024 * 1024, 'File is larger than 1MB limit')
         .withValidation((_: File, currentCount: number) => currentCount < 5, 'Maximum of 5 files allowed per pad')
         .upload();
 };
