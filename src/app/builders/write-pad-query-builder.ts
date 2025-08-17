@@ -84,7 +84,7 @@ export class WritePadQueryBuilder {
 
         const conflictCondition = this.buildConflictCondition(this.serverLastUpdate);
 
-        const result = await database
+        const _ = await database
             .insert(pads)
             .values({
                 id: this.document,
@@ -104,13 +104,7 @@ export class WritePadQueryBuilder {
                 where: conflictCondition,
             });
 
-        const updateSucceeded = result.rowsAffected > 0;
-
-        if (updateSucceeded) {
-            return { error: null, result: updateTimestamp };
-        }
-
-        return { error: 'Write operation failed', result: null };
+        return { error: null, result: updateTimestamp };
     }
 
     private stringifyBuffer(mergedBuffer: Uint8Array<ArrayBufferLike>): string {
