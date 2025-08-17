@@ -41,6 +41,9 @@ export default function RootLayout({ children }: IRootLayout) {
                 <meta property="og:image:type" content="image/png" />
                 <meta property="og:image:width" content="256" />
                 <meta property="og:image:height" content="256" />
+
+                <link rel="preconnect" href="https://fonts.googleapis.com" />
+                <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
             </head>
 
             <body className={`${geistSans.className} ${geistMono.variable}`}>
