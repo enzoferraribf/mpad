@@ -78,8 +78,8 @@ export function Help({ open, onOpenChange }: IHelp) {
                                     <div>
                                         <div className="mb-1 text-sm">📄 Export PDF</div>
                                         <p className="text-xs text-muted-foreground">
-                                            Export the current pad as PDF. If you're on dark mode, on the print modal go
-                                            to &quot;More Settings&quot; and check Background Graphics
+                                            Export the current pad as PDF. If you are on dark mode, on the print modal
+                                            go to &quot;More Settings&quot; and check the Background Graphics checkbox
                                         </p>
                                     </div>
                                 </div>
