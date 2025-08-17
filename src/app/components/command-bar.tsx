@@ -13,17 +13,19 @@ import {
     CommandList,
 } from '@/app/components/shadcn/command';
 
-import { handleFileUpload } from '@/app/lib/file-upload';
+import { handleFileUpload } from '@/app/lib/file';
 import { downloadPDF } from '@/app/lib/pdf-export';
 
 export function CommandBar() {
+    const { setTheme, resolvedTheme } = useTheme();
+
     const { command, setCommand, setExplorer, setStorage, setLayout } = useUIStore();
+
     const { getTextContent } = useDocumentStore();
-    const content = getTextContent();
 
     const { fileDocument } = useFileStore();
 
-    const { setTheme, resolvedTheme } = useTheme();
+    const content = getTextContent();
 
     const handleFiles = () => {
         setExplorer(true);
@@ -41,7 +43,7 @@ export function CommandBar() {
     };
 
     const handlePDFExport = async () => {
-        await downloadPDF(content, resolvedTheme);
+        await downloadPDF(content, resolvedTheme || 'light');
     };
 
     const handleLayoutChange = (layout: 'editor' | 'preview' | 'default') => {

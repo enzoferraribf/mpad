@@ -5,8 +5,7 @@ import { cookies } from 'next/headers';
 import { eq } from 'drizzle-orm';
 
 import { IPadSnapshot } from '@/app/models/pad';
-import { createDatabase } from '@/app/lib/db';
-import { pads } from '@/app/lib/schema';
+import { createDatabase, pads } from '@/app/lib/db';
 
 function bufferize(data: string): number[] {
     if (!data) {

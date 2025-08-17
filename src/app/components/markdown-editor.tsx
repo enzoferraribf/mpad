@@ -16,7 +16,7 @@ import { useFileStore } from '@/app/stores/file-store';
 
 import { debounce } from '@/app/lib/debounce';
 import { handleServerDateTime } from '@/app/lib/datetime';
-import { DocumentBuilder } from '@/app/lib/document-builder';
+import { DocumentBuilder } from '@/app/builders/document-builder';
 
 import { IMarkdownEditor } from '@/app/models/markdown-editor';
 
@@ -27,7 +27,7 @@ export function MarkdownEditor({ pathname, root, serverContent, ice }: IMarkdown
 
     const { resolvedTheme } = useTheme();
 
-    const { textDocument, getTextLoaded, setTextDocument, setTextModified, setTextUpdated } = useDocumentStore();
+    const { textDocument, setTextDocument, setTextModified, setTextUpdated } = useDocumentStore();
 
     const { transaction, setConnections, setTransaction } = useConnectionStore();
 

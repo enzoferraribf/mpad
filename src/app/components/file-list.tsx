@@ -2,14 +2,13 @@ import { useFileStore } from '@/app/stores/file-store';
 
 import { Button } from '@/app/components/shadcn/button';
 
-import { removeFile } from '@/app/lib/file-sync';
 import { formatFileSize } from '@/app/lib/file';
 import { formatUploadDate } from '@/app/lib/datetime';
 
 import { IFileList, IEphemeralFile } from '@/app/models/files';
 
 export function FileList({ files }: IFileList) {
-    const { fileDocument } = useFileStore();
+    const { removeFile } = useFileStore();
 
     const handleDownload = (file: IEphemeralFile) => {
         const link = document.createElement('a');
@@ -19,8 +18,7 @@ export function FileList({ files }: IFileList) {
     };
 
     const handleDelete = (id: string) => {
-        if (!fileDocument) return;
-        removeFile(fileDocument, id);
+        removeFile(id);
     };
 
     if (files.length === 0) {
