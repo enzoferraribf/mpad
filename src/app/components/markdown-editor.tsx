@@ -1,14 +1,12 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 
 import { useTheme } from 'next-themes';
 
 import { editor } from 'monaco-editor';
 import Editor, { Monaco } from '@monaco-editor/react';
-import { Doc, encodeStateAsUpdateV2 } from 'yjs';
+import { Doc } from 'yjs';
 import { MonacoBinding } from 'y-monaco';
 import { WebrtcProvider } from 'y-webrtc';
-
-import { write } from '@/app/actions/pad';
 
 import { useDocumentStore } from '@/app/stores/document-store';
 import { useConnectionStore } from '@/app/stores/connection-store';
@@ -17,6 +15,7 @@ import { useFileStore } from '@/app/stores/file-store';
 import { debounce } from '@/app/lib/debounce';
 import { handleServerDateTime } from '@/app/lib/datetime';
 import { DocumentBuilder } from '@/app/builders/document-builder';
+import { TransactionBuilder } from '@/app/builders/transaction-builder';
 
 import { IMarkdownEditor } from '@/app/models/markdown-editor';
 
@@ -41,22 +40,25 @@ export function MarkdownEditor({ pathname, root, serverContent, ice }: IMarkdown
         };
     }, []);
 
-    useEffect(() => debounce(500, async () => transact(transaction)), [transaction]);
+    const transact = useCallback(
+        async (transactionId: number) => {
+            if (!textDocument) return;
 
-    async function transact(transaction: number) {
-        if (!textDocument) return;
+            await TransactionBuilder.create()
+                .withDocument(textDocument)
+                .withRoot(root)
+                .withPathname(pathname)
+                .withTransactionId(transactionId)
+                .withOnSuccess((timestamp: number) => {
+                    setTextUpdated(handleServerDateTime(timestamp));
+                    setTextModified(false);
+                })
+                .execute();
+        },
+        [textDocument, root, pathname, setTextUpdated, setTextModified],
+    );
 
-        const buffer = encodeStateAsUpdateV2(textDocument);
-
-        const csv = buffer.join(',');
-
-        const lastUpdated = await write(root, pathname, csv, transaction);
-
-        if (lastUpdated) {
-            setTextUpdated(handleServerDateTime(lastUpdated));
-            setTextModified(false);
-        }
-    }
+    useEffect(() => debounce(500, async () => transact(transaction)), [transact, transaction]);
 
     const handleModification = (_: string | undefined) => {
         setTextModified(true);
