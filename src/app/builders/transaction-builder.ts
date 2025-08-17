@@ -1,4 +1,5 @@
 import { Doc, encodeStateAsUpdateV2 } from 'yjs';
+import { toast } from 'sonner';
 
 import { write } from '@/app/actions/pad';
 
@@ -7,6 +8,7 @@ export class TransactionBuilder {
     private root: string | null = null;
     private pathname: string | null = null;
     private transactionId: number | null = null;
+    private maxDocumentSize: number | null = null;
     private onSuccess: ((timestamp: number) => void) | null = null;
     private onError: ((error: Error) => void) | null = null;
     private customEncoder: ((doc: Doc) => string) | null = null;
@@ -50,6 +52,11 @@ export class TransactionBuilder {
         return this;
     }
 
+    withMaxDocumentSize(maxSize: number) {
+        this.maxDocumentSize = maxSize;
+        return this;
+    }
+
     async execute(): Promise<number | null> {
         if (!this.document) {
             throw new Error('Document is required for transaction');
@@ -65,6 +72,16 @@ export class TransactionBuilder {
         }
 
         try {
+            if (this.maxDocumentSize && this.exceedsMaxSize()) {
+                const maximumSize = this.maxDocumentSize.toLocaleString();
+
+                toast.error(
+                    `Document exceeds maximum size limit of ${maximumSize} characters. It will not be persisted, but changes will live during this session.`,
+                );
+
+                return null;
+            }
+
             const encodedData = this.customEncoder
                 ? this.customEncoder(this.document)
                 : this.defaultEncoder(this.document);
@@ -98,5 +115,14 @@ export class TransactionBuilder {
         if (this.onError) {
             this.onError(error);
         }
+    }
+
+    private exceedsMaxSize(): boolean {
+        if (!this.document || !this.maxDocumentSize) {
+            return false;
+        }
+
+        const text = this.document.getText('monaco');
+        return text.toString().length > this.maxDocumentSize;
     }
 }

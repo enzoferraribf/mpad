@@ -14,6 +14,7 @@ import { useFileStore } from '@/app/stores/file-store';
 
 import { debounce } from '@/app/lib/debounce';
 import { handleServerDateTime } from '@/app/lib/datetime';
+
 import { DocumentBuilder } from '@/app/builders/document-builder';
 import { TransactionBuilder } from '@/app/builders/transaction-builder';
 
@@ -48,6 +49,7 @@ export function MarkdownEditor({ pathname, root, serverContent, ice }: IMarkdown
                 .withDocument(textDocument)
                 .withRoot(root)
                 .withPathname(pathname)
+                .withMaxDocumentSize(15000)
                 .withTransactionId(transactionId)
                 .withOnSuccess((timestamp: number) => {
                     setTextUpdated(handleServerDateTime(timestamp));
