@@ -1,50 +1,53 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import dynamic from 'next/dynamic';
+import { useTheme } from 'next-themes';
+
+import '@excalidraw/excalidraw/index.css';
 
 import { useUIStore } from '@/app/stores/ui-store';
 import { useDrawingStore } from '@/app/stores/drawing-store';
-import { isValidExcalidrawUrl } from '@/lib/excalidraw-validator';
-
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/app/components/shadcn/dialog';
 import { Button } from '@/app/components/shadcn/button';
 import { toast } from 'sonner';
 
+const ExcalidrawEditor = dynamic(() => import('@excalidraw/excalidraw').then(mod => mod.Excalidraw), { ssr: false });
+
 export function Excalidraw() {
     const { excalidraw, setExcalidraw } = useUIStore();
     const { getSelectedDrawing, setSelectedDrawingId, addDrawing } = useDrawingStore();
+    const { resolvedTheme } = useTheme();
 
     const [drawingName, setDrawingName] = useState('');
-    const [drawingUrl, setDrawingUrl] = useState('');
-    const [inputUrl, setInputUrl] = useState('');
+    const [excalidrawData, setExcalidrawData] = useState<any>(null);
 
     const selectedDrawing = getSelectedDrawing();
 
     useEffect(() => {
         if (selectedDrawing) {
             setDrawingName(selectedDrawing.name);
-            setDrawingUrl(selectedDrawing.url);
-            setInputUrl('');
+            try {
+                setExcalidrawData(JSON.parse(selectedDrawing.url));
+            } catch {
+                setExcalidrawData(null);
+            }
+        } else {
+            setDrawingName('');
+            setExcalidrawData(null);
         }
     }, [selectedDrawing]);
 
     const handleSave = () => {
-        const urlToSave = inputUrl.trim() || drawingUrl.trim();
-        if (drawingName.trim() && urlToSave) {
-            if (!isValidExcalidrawUrl(urlToSave)) {
-                toast.error("That's not the correct link!");
-                return;
-            }
+        if (!drawingName.trim() || !excalidrawData) return;
 
-            addDrawing(drawingName.trim(), urlToSave);
-            setDrawingName('');
-            setDrawingUrl('');
-            setInputUrl('');
+        addDrawing(drawingName.trim(), JSON.stringify(excalidrawData));
+        setDrawingName('');
+        setExcalidrawData(null);
 
-            toast.success('Saved excalidraw', {
-                description: `Excalidraw: ${drawingName.trim()}`,
-            });
-        }
+        toast.success('Saved excalidraw', {
+            description: `Excalidraw: ${drawingName.trim()}`,
+        });
     };
 
     const handleClose = () => {
@@ -52,14 +55,28 @@ export function Excalidraw() {
         setSelectedDrawingId(null);
     };
 
-    const currentUrl = selectedDrawing?.url || drawingUrl || 'https://excalidraw.com';
+    const handleChange = useCallback((elements: any, appState: any) => {
+        setExcalidrawData({ elements, appState });
+    }, []);
+
+    const initialData = excalidrawData
+        ? {
+              elements: excalidrawData.elements || [],
+              appState: {
+                  ...excalidrawData.appState,
+                  collaborators: new Map(),
+                  theme: resolvedTheme === 'dark' ? 'dark' : 'light',
+              },
+              scrollToContent: true,
+          }
+        : undefined;
 
     return (
         <Dialog open={excalidraw} onOpenChange={handleClose}>
-            <DialogContent className="flex h-[80vh] w-[80vw] max-w-none flex-col p-0">
+            <DialogContent className="flex h-[90vh] w-[90vw] max-w-none flex-col p-0">
                 <DialogHeader className="mb-2 shrink-0 pl-6 pr-6 pt-6">
                     <DialogTitle className="mb-2">Excalidraw</DialogTitle>
-                    <div className="mt-6 flex flex-col gap-2 sm:flex-row">
+                    <div className="mt-6 flex gap-2">
                         <input
                             type="text"
                             placeholder="Drawing name"
@@ -67,29 +84,20 @@ export function Excalidraw() {
                             onChange={e => setDrawingName(e.target.value)}
                             className="flex-1 rounded-md border border-border px-3 py-2 text-sm"
                         />
-                        <input
-                            type="url"
-                            placeholder="Excalidraw shareable link"
-                            value={inputUrl}
-                            onChange={e => setInputUrl(e.target.value)}
-                            className="flex-1 rounded-md border border-border px-3 py-2 text-sm"
-                        />
                         <Button
                             onClick={handleSave}
-                            disabled={!drawingName.trim() || (!inputUrl.trim() && !drawingUrl.trim())}
+                            disabled={!drawingName.trim() || !excalidrawData}
                             variant="secondary"
-                            className="sm:w-auto"
                         >
                             Save
                         </Button>
                     </div>
                 </DialogHeader>
                 <div className="min-h-0 flex-1 p-6 pt-0">
-                    <iframe
-                        src={currentUrl}
-                        className="h-full w-full rounded-md border-0"
-                        title="Excalidraw Canvas"
-                        allow="clipboard-read; clipboard-write"
+                    <ExcalidrawEditor 
+                        initialData={initialData} 
+                        onChange={handleChange}
+                        theme={resolvedTheme === 'dark' ? 'dark' : 'light'}
                     />
                 </div>
             </DialogContent>

@@ -10,6 +10,7 @@
         "prettier": "prettier --write './**/*.*'"
     },
     "dependencies": {
+        "@excalidraw/excalidraw": "^0.18.0",
         "@libsql/client": "^0.14.0",
         "@monaco-editor/react": "^4.6.0",
         "@radix-ui/react-accordion": "^1.2.2",

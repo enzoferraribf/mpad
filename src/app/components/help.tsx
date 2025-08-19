@@ -112,13 +112,9 @@ export function Help({ open, onOpenChange }: IHelp) {
                                             Open drawing canvas with Excalidraw.
                                         </p>
 
-                                        <p className="mt-2 text-xs text-muted-foreground">
-                                            <span className="font-bold">Note:</span> to save a excalidraw:
-                                            <ul className="mt-2 space-y-2">
-                                                <li>1st: Open the excalidraw menu</li>
-                                                <li>2nd: &quot;Save to&quot; and choose link</li>
-                                                <li>3rd: Paste the link on the top input and hit save!</li>
-                                            </ul>
+                                        <p className="text-xs text-muted-foreground">
+                                            <span className="font-bold">Note:</span> excalidraws created before August
+                                            19th are deprecated. Delete them and create new ones.
                                         </p>
                                     </div>
                                     <div>
