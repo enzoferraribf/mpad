@@ -59,7 +59,7 @@ export function Excalidraw() {
             <DialogContent className="flex h-[80vh] w-[80vw] max-w-none flex-col p-0">
                 <DialogHeader className="mb-2 shrink-0 pl-6 pr-6 pt-6">
                     <DialogTitle className="mb-2">Excalidraw</DialogTitle>
-                    <div className="mt-6 flex gap-2">
+                    <div className="mt-6 flex flex-col gap-2 sm:flex-row">
                         <input
                             type="text"
                             placeholder="Drawing name"
@@ -78,6 +78,7 @@ export function Excalidraw() {
                             onClick={handleSave}
                             disabled={!drawingName.trim() || (!inputUrl.trim() && !drawingUrl.trim())}
                             variant="secondary"
+                            className="sm:w-auto"
                         >
                             Save
                         </Button>

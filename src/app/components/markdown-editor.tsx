@@ -131,7 +131,7 @@ export function MarkdownEditor({ pathname, root, serverContent, ice }: IMarkdown
             options={{
                 minimap: { enabled: false },
                 lineHeight: 1.8,
-                fontFamily: 'JetBrains Mono',
+                fontFamily: 'Geist Mono',
                 cursorStyle: 'block-outline',
                 padding: { top: 32, bottom: 32 },
                 fontSize: 14,

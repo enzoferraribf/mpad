@@ -11,7 +11,6 @@ import { IRootLayout } from '@/app/models/layout';
 
 import './globals.css';
 
-const geistSans = Geist({ subsets: ['latin'] });
 const geistMono = Geist_Mono({ subsets: ['latin'], variable: '--font-geist-mono' });
 
 export const metadata: Metadata = {
@@ -46,7 +45,7 @@ export default function RootLayout({ children }: IRootLayout) {
                 <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
             </head>
 
-            <body className={`${geistSans.className} ${geistMono.variable}`}>
+            <body className={`${geistMono.variable}`}>
                 <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
                     {children}
                     <Toaster />
